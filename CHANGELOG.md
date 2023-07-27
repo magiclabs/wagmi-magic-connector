@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 1.1.1
+
+### Patch Changes
+
+- Updates WAGMI and Magic dependencies
+
 ## 1.1.0
 
 ### Minor Changes
