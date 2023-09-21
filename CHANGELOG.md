@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 1.1.2
+
+### Patch Changes
+
+- 8dd286f: Updates viem dependency
+
 ## 1.1.1
 
 ### Patch Changes
