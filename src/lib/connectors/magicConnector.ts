@@ -19,10 +19,10 @@ export interface MagicOptions {
 }
 
 /**
- * Magic Connector class is a base class for Magic Auth and Magic Connect Connectors
+ * Magic Connector class is a base class for Dedicated Wallet and Universal Wallet Connectors
  * It implements the common functionality of both the connectors
  *
- * Magic Auth Connector and Magic Connect Connector are the two connectors provided by this library
+ * Dedicated Wallet Connector and Universal Wallet Connector are the two connectors provided by this library
  * And both of them extend this class.
  */
 export abstract class MagicConnector extends Connector {

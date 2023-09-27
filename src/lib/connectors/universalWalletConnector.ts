@@ -11,21 +11,21 @@ import { Magic } from 'magic-sdk'
 import { normalizeChainId } from '../utils'
 import { MagicConnector } from './magicConnector'
 
-export interface MagicConnectorOptions {
+export interface UniversalWalletOptions {
   apiKey: string
   magicSdkConfiguration?: MagicSDKAdditionalConfiguration
   networks?: EthNetworkConfiguration[]
 }
 
 /**
- * Magic Connect Connector class used to connect to wallet using Magic Connect modal
+ * Universal Wallet Connector class used to connect to wallet using Universal Wallet modal
  * This uses the modal UI from Magic itself and styles for it can be configured using
  * magic dashboard.
  *
  * @example
  * ```typescript
- * import { MagicConnectConnector } from '@magiclabs/wagmi-connector';
- * const connector = new MagicConnectConnector({
+ * import { UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+ * const connector = new UniversalWalletConnector({
  *  options: {
  *     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
  *    //...Other options
@@ -33,16 +33,16 @@ export interface MagicConnectorOptions {
  * });
  * ```
  * @see https://github.com/magiclabs/wagmi-magic-connector#-usage
- * @see https://magic.link/docs/connect/overview
+ * @see https://magic.link/docs/universal/overview
  */
 
-export class MagicConnectConnector extends MagicConnector {
+export class UniversalWalletConnector extends MagicConnector {
   magic: InstanceWithExtensions<
     SDKBase,
     MagicSDKExtensionsOption<string>
   > | null
 
-  constructor(config: { chains?: Chain[]; options: MagicConnectorOptions }) {
+  constructor(config: { chains?: Chain[]; options: UniversalWalletOptions }) {
     super(config)
     this.magic = this.getMagicSDK()
   }
@@ -65,7 +65,7 @@ export class MagicConnectConnector extends MagicConnector {
   }
 
   /**
-   * Connect method attempts to connects to wallet using Magic Connect modal
+   * Connect method attempts to connects to wallet using Universal Wallet modal
    * this will open a modal for the user to select their wallet
    */
   async connect() {
@@ -100,7 +100,7 @@ export class MagicConnectConnector extends MagicConnector {
   }
 
   /**
-   * checks if user is authorized with Magic Connect
+   * checks if user is authorized with Universal Wallet
    */
   async isAuthorized() {
     try {
@@ -158,3 +158,5 @@ export class MagicConnectConnector extends MagicConnector {
     return chain
   }
 }
+
+export class MagicConnectConnector extends UniversalWalletConnector {}
