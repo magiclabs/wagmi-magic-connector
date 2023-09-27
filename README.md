@@ -42,30 +42,31 @@ yarn add @magiclabs/wagmi-connector
 
 # 🔎 Package TL;DR
 
-The package contains two main connector classes: `MagicAuthConnector` & `MagicConnectConnector`
+The package contains two main connector classes: `DedicatedWalletConnector` & `UniversalWalletConnector`
 
-`MagicAuthConnector` is a connector integrated to the [Magic Auth](https://magic.link/docs/auth/overview)
+`DedicatedWalletConnector` is a connector integrated to the [Dedicated Wallet](https://magic.link/docs/dedicated/overview)
 product. It is useful if you need to assign an address to your user. 
 
-`MagicConnectConnector` is a connector integrated to the [Magic Connect](https://magic.link/docs/connect/overview)
+`UniversalWalletConnector` is a connector integrated to the [Universal Wallet](https://magic.link/docs/universal/overview)
 product. It can be used to assign a read-write wallet to your user.
 
+DEPRECATED: `MagicAuthConnector` and `MagicConnectConnector` have been replaced by `DedicatedWalletConnector` and `UniversalWalletConnector` in order to line up with Magic's [product names changes](https://magic.link/docs/universal/resources/faqs#why-were-magic-product-names-changed-from-magic-connect-and-magic-auth). However, they are still usable and will function as they did before.
 
 # ⭐ Usage
 
 ```javascript
-import { MagicAuthConnector, MagicConnectConnector } from '@magiclabs/wagmi-connector';
+import { DedicatedWalletConnector, UniversalWalletConnector } from '@magiclabs/wagmi-connector';
 
-// Magic Auth integration
-const connector = new MagicAuthConnector({
+// Dedicated Wallet integration
+const connector = new DedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
     //...Other options
   },
 });
 
-// Magic Connect integration 
-const connector = new MagicConnectConnector({
+// Universal Wallet integration 
+const connector = new UniversalWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
     //...Other options
@@ -79,7 +80,7 @@ const connector = new MagicConnectConnector({
 
 The following can be passed to connector options object:
 
-| Key                   | Value                      | `MagicAuthConnector` support | `MagicConnectConnector` support | Description                                                                                                                                                                    |
+| Key                   | Value                      | `DedicatedWalletConnector` support | `UniversalWalletConnector` support | Description                                                                                                                                                                    |
 |-----------------------|----------------------------|------------------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | accentColor           | css color (hex/rgb/etc...) | ✔️	                          | ✔️                              | 🎨 (Optional) Makes modal to use the custom accentColor instead of default purple                                                                                              |
 | isDarkMode            | true / false               | ✔️	                          | ✔️                              | 🎨 (Optional) Makes modal dark mode if true. Default value is false                                                                                                            |
@@ -95,9 +96,9 @@ The following can be passed to connector options object:
 
 The following can be passed to options.OAuthOptions object to configure OAuth login:
 
-| Key         | Vvalue           | Description                                                                                               |
+| Key         | Value           | Description                                                                                               |
 |-------------|------------------|-----------------------------------------------------------------------------------------------------------|
-| providers   | array of strings | 🌟 (Required) List of providers to enable. check out all possible providers in OauthOptions section above |
+| providers   | array of strings | 🌟 (Required) List of providers to enable. check out all possible providers in OAuthOptions section above |
 | callbackUrl | string           | 🌟 (Optional) Callback URL to redirect to after authentication. Default value is current URL.             |
 
 ### Providers
@@ -122,7 +123,7 @@ You can provide a callback URL to redirect the user to after authentication. the
 
 # 🍀 Supported Logins
 
-| Key                        | `MagicAuthConnector` support | `MagicConnectConnector` support |
+| Key                        | `DedicatedWalletConnector` support | `UniversalWalletConnector` support |
 |----------------------------|------------------------------|---------------------------------|
 | Email                      | ✔️	                          | ✔️	                             |
 | SMS                        | ✔️	                          | ❌                               |
@@ -137,7 +138,7 @@ You can provide a callback URL to redirect the user to after authentication. the
 You configure OAuth with magic by adding the following options to the connector:
 
 ```javascript
-const connector = new MagicAuthConnector({
+const connector = new DedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
     oauthOptions : {
@@ -154,7 +155,7 @@ const connector = new MagicAuthConnector({
 You can enable SMS authentication by adding the following options to the connector:
 
 ```javascript
-const connector = new MagicAuthConnector({
+const connector = new DedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
     enableSMSLogin: true, //optional (default: false)
@@ -170,7 +171,7 @@ You have to enable SMS authentication in your Magic Link account first to make i
 By default Email Authentication is set to true as default. if you wish to remove sending magic links via emails, pass ```enableEmailLogin: false``` in options object as follows :
 
 ```javascript
-const connector = new MagicAuthConnector({
+const connector = new DedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
     enableEmailLogin: false, //optional (default: true)
@@ -185,9 +186,9 @@ const connector = new MagicAuthConnector({
 You can customize the modal's theme, default accent color, logo and header text.
 
 ```javascript
-import { MagicAuthConnector } from '@magiclabs/wagmi-connector';
+import { DedicatedWalletConnector } from '@magiclabs/wagmi-connector';
 
-const connector = new MagicAuthConnector({
+const connector = new DedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_LINK_API_KEY,
     accentColor: '#ff0000',
@@ -210,7 +211,7 @@ To use the connector with Rainbow kit, create a new file `RainbowMagicConnector.
 ```javascript
 // RainbowMagicConnector.ts
 
-import { MagicConnectConnector } from '@magiclabs/wagmi-connector';
+import { UniversalWalletConnector } from '@magiclabs/wagmi-connector';
 
 export const rainbowMagicConnector = ({ chains }: any) => ({
   id: 'magic',
@@ -218,7 +219,7 @@ export const rainbowMagicConnector = ({ chains }: any) => ({
   iconUrl: 'https://svgshare.com/i/iJK.svg',
   iconBackground: '#fff',
   createConnector: () => {
-    const connector = new MagicConnectConnector({
+    const connector = new UniversalWalletConnector({
       chains: chains,
       options: {
         apiKey: 'YOUR_MAGIC_CONNECT_API_KEY',
