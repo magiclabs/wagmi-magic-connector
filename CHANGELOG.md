@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 1.1.3
+
+### Patch Changes
+
+- e381c54: Updates package to use new Magic product names (Dedicated and Universal Wallet)
+
 ## 1.1.2
 
 ### Patch Changes
