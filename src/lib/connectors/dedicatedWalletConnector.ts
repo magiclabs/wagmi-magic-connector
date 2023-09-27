@@ -17,7 +17,7 @@ interface UserDetails {
   oauthProvider: OAuthProvider
 }
 
-interface MagicAuthOptions extends MagicOptions {
+interface DedicatedWalletOptions extends MagicOptions {
   enableEmailLogin?: boolean
   enableSMSLogin?: boolean
   oauthOptions?: {
@@ -31,14 +31,14 @@ interface MagicAuthOptions extends MagicOptions {
 }
 
 /**
- * Magic Auth Connector class used to connect to wallet using Magic Auth.
+ * Dedicated Wallet Connector class used to connect to wallet using Dedicated Wallet.
  * It uses modal UI defined in our package which also takes in various styling options
  * for custom experience.
  *
  * @example
  * ```typescript
- * import { MagicConnectConnector } from '@magiclabs/wagmi-connector';
- * const connector = new MagicConnectConnector({
+ * import { DedicatedWalletConnector } from '@magiclabs/wagmi-connector';
+ * const connector = new DedicatedWalletConnector({
  *  options: {
  *     apiKey: YOUR_MAGIC_LINK_API_KEY, //required
  *    //...Other options
@@ -46,10 +46,10 @@ interface MagicAuthOptions extends MagicOptions {
  * });
  * ```
  * @see https://github.com/magiclabs/wagmi-magic-connector#-usage
- * @see https://magic.link/docs/connect/overview
+ * @see https://magic.link/docs/dedicated/overview
  */
 
-export class MagicAuthConnector extends MagicConnector {
+export class DedicatedWalletConnector extends MagicConnector {
   magicSDK?: InstanceWithExtensions<SDKBase, OAuthExtension[]>
   magicSdkConfiguration?: MagicSDKAdditionalConfiguration<
     string,
@@ -61,7 +61,7 @@ export class MagicAuthConnector extends MagicConnector {
   oauthCallbackUrl?: string
   magicOptions: MagicOptions
 
-  constructor(config: { chains?: Chain[]; options: MagicAuthOptions }) {
+  constructor(config: { chains?: Chain[]; options: DedicatedWalletOptions }) {
     super(config)
     this.magicSdkConfiguration = config.options.magicSdkConfiguration
     this.oauthProviders = config.options.oauthOptions?.providers || []
@@ -86,7 +86,7 @@ export class MagicAuthConnector extends MagicConnector {
   }
 
   /**
-   * Connect method attempts to connects to wallet using Magic Connect modal
+   * Connect method attempts to connects to wallet using Dedicated Wallet modal
    * this will open a modal for the user to select their wallet
    */
   async connect() {
@@ -131,20 +131,20 @@ export class MagicAuthConnector extends MagicConnector {
 
       const magic = this.getMagicSDK()
 
-      // LOGIN WITH MAGIC LINK WITH OAUTH PROVIDER
+      // LOGIN WITH MAGIC USING OAUTH PROVIDER
       if (modalOutput.oauthProvider)
         await magic.oauth.loginWithRedirect({
           provider: modalOutput.oauthProvider,
           redirectURI: this.oauthCallbackUrl || window.location.href,
         })
 
-      // LOGIN WITH MAGIC LINK WITH EMAIL
+      // LOGIN WITH MAGIC USING EMAIL
       if (modalOutput.email)
         await magic.auth.loginWithMagicLink({
           email: modalOutput.email,
         })
 
-      // LOGIN WITH MAGIC LINK WITH PHONE NUMBER
+      // LOGIN WITH MAGIC USING PHONE NUMBER
       if (modalOutput.phoneNumber)
         await magic.auth.loginWithSMS({
           phoneNumber: modalOutput.phoneNumber,
@@ -206,3 +206,5 @@ export class MagicAuthConnector extends MagicConnector {
     return output
   }
 }
+
+export class MagicAuthConnector extends DedicatedWalletConnector {}
