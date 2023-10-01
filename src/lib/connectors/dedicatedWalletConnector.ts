@@ -140,7 +140,7 @@ export class DedicatedWalletConnector extends MagicConnector {
 
       // LOGIN WITH MAGIC USING EMAIL
       if (modalOutput.email)
-        await magic.auth.loginWithMagicLink({
+        await magic.auth.loginWithEmailOTP({
           email: modalOutput.email,
         })
 
