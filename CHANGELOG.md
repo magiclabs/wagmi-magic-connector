@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 1.1.4
+
+### Patch Changes
+
+- 7e727a0: Updates @wagmi-core dependency
+
 ## 1.1.3
 
 ### Patch Changes
