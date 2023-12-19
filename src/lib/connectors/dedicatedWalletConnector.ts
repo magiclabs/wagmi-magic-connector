@@ -198,7 +198,7 @@ export class DedicatedWalletConnector extends MagicConnector {
       customLogo: this.magicOptions.customLogo,
       customHeaderText: this.magicOptions.customHeaderText,
       enableSMSLogin: enableSMSLogin,
-      enableEmailLogin: enableEmailLogin || true,
+      enableEmailLogin: enableEmailLogin,
       oauthProviders,
     })) as UserDetails
 
