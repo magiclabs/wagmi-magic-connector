@@ -2,7 +2,7 @@
 
 [WAGMI](https://wagmi.sh/) Connector to connect with [Magic](https://magic.link/). Magic is a developer SDK that you can integrate into your application to enable passwordless authentication using magic links, OTPs, OAuth from third-party services, and more for your web3 App.
 
-Special thanks for the [Everipedia](https://github.com/EveripediaNetwork) team for creating the connector and working with us for ongoing support and maintenance.
+Special thanks to the [Everipedia](https://github.com/EveripediaNetwork) team for creating the connector and working with us for ongoing support and maintenance.
 
 ![Frame 184 (4)](https://user-images.githubusercontent.com/52039218/174133833-fc63f237-63bf-4134-a22b-ce77ae0f2a9b.png)
 
@@ -60,7 +60,7 @@ import { DedicatedWalletConnector, UniversalWalletConnector } from '@magiclabs/w
 // Dedicated Wallet integration
 const connector = new DedicatedWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY, //required
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
   },
 });
@@ -68,7 +68,7 @@ const connector = new DedicatedWalletConnector({
 // Universal Wallet integration 
 const connector = new UniversalWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY, //required
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
   },
 });
@@ -140,7 +140,7 @@ You configure OAuth with magic by adding the following options to the connector:
 ```javascript
 const connector = new DedicatedWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY, //required
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     oauthOptions : {
       providers: ['facebook', 'google', 'twitter'],
       callbackUrl: 'https://your-callback-url.com', //optional
@@ -157,23 +157,23 @@ You can enable SMS authentication by adding the following options to the connect
 ```javascript
 const connector = new DedicatedWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY, //required
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableSMSLogin: true, //optional (default: false)
     //...Other options
   },
 });
 ```
 
-You have to enable SMS authentication in your Magic Link account first to make it work.
+You have to enable SMS authentication in your [Magic dashboard](https://dashboard.magic.link) first to make it work.
 
 ## 📧 Disable Email Authentication
 
-By default Email Authentication is set to true as default. if you wish to remove sending magic links via emails, pass ```enableEmailLogin: false``` in options object as follows :
+By default Email is set to true as default. if you wish to remove Email OTP, pass `enableEmailLogin: false` in options object as follows :
 
 ```javascript
 const connector = new DedicatedWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY, //required
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableEmailLogin: false, //optional (default: true)
     //...Other options
   },
@@ -190,7 +190,7 @@ import { DedicatedWalletConnector } from '@magiclabs/wagmi-connector';
 
 const connector = new DedicatedWalletConnector({
   options: {
-    apiKey: YOUR_MAGIC_LINK_API_KEY,
+    apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY,
     accentColor: '#ff0000',
     customLogo: 'https://example.com/logo.png',
     headerText: 'Login to your account',
