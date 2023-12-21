@@ -90,7 +90,7 @@ export const createModal = async (props: {
           ${
             props.enableSMSLogin || props.enableEmailLogin
               ? ` <button class="Magic__submitButton" type="submit">
-                Send login link
+                Log in / Sign up
               </button>`
               : ''
           }
