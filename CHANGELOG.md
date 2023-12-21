@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 1.1.5
+
+### Patch Changes
+
+- 417a1bf: Updates dedicated connector to use email OTP
+
 ## 1.1.4
 
 ### Patch Changes
