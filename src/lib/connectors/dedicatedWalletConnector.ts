@@ -1,14 +1,13 @@
-import { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
   SDKBase,
 } from '@magic-sdk/provider'
 import { createConnector, normalizeChainId } from '@wagmi/core'
-import { Magic } from 'magic-sdk'
 import {
-  MagicConnectorParams,
-  MagicOptions,
+  type MagicConnectorParams,
+  type MagicOptions,
   magicConnector,
 } from './magicConnector'
 import { UserRejectedRequestError, getAddress } from 'viem'
@@ -60,37 +59,24 @@ export function dedicatedWalletConnector({
   chains,
   options,
 }: DedicatedWalletConnectorParams) {
-  let magicSDK: InstanceWithExtensions<SDKBase, OAuthExtension[]> | null = null
-
-  const getDedicatedMagicSdk = () => {
-    if (!magicSDK) {
-      magicSDK = new Magic(options.apiKey, {
-        ...options.magicSdkConfiguration,
-        extensions: [new OAuthExtension()],
-      }) as InstanceWithExtensions<SDKBase, OAuthExtension[]>
-    }
-    return magicSDK
-  }
-
   let {
     id,
     name,
     type,
     isModalOpen,
     getAccount,
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     getMagicSDK,
     getProvider,
-    // getWalletClient,
     onAccountsChanged,
-  } = magicConnector({ chains, options })
+  } = magicConnector({
+    chains,
+    options: { ...options, connectorType: 'dedicated' },
+  })
 
-  getMagicSDK = getDedicatedMagicSdk
-
-  const oauthProviders = options.oauthOptions?.providers || []
+  const oauthProviders = options.oauthOptions?.providers ?? []
   const oauthCallbackUrl = options.oauthOptions?.callbackUrl
-  const enableSMSLogin = options.enableSMSLogin || false
-  const enableEmailLogin = options.enableEmailLogin || true
+  const enableSMSLogin = options.enableSMSLogin ?? false
+  const enableEmailLogin = options.enableEmailLogin ?? true
 
   /**
    * This method is used to get user details from the modal UI
@@ -148,20 +134,23 @@ export function dedicatedWalletConnector({
         }
       }
 
-      if (isModalOpen) {
+      if (!isModalOpen) {
         const modalOutput = await getUserDetailsByForm(
           enableSMSLogin,
           enableEmailLogin,
           oauthProviders,
         )
 
-        const magic = getDedicatedMagicSdk()
+        const magic = getMagicSDK() as InstanceWithExtensions<
+          SDKBase,
+          OAuthExtension[]
+        >
 
         // LOGIN WITH MAGIC USING OAUTH PROVIDER
         if (modalOutput.oauthProvider)
           await magic.oauth.loginWithRedirect({
             provider: modalOutput.oauthProvider,
-            redirectURI: oauthCallbackUrl || window.location.href,
+            redirectURI: oauthCallbackUrl ?? window.location.href,
           })
 
         // LOGIN WITH MAGIC USING EMAIL
@@ -187,7 +176,7 @@ export function dedicatedWalletConnector({
 
     disconnect: async () => {
       try {
-        const magic = getDedicatedMagicSdk()
+        const magic = getMagicSDK()
         await magic?.wallet.disconnect()
         config.emitter.emit('disconnect')
       } catch (error) {
@@ -222,7 +211,10 @@ export function dedicatedWalletConnector({
 
     isAuthorized: async () => {
       try {
-        const magic = getDedicatedMagicSdk()
+        const magic = getMagicSDK() as InstanceWithExtensions<
+          SDKBase,
+          OAuthExtension[]
+        >
 
         if (!magic) {
           return false
