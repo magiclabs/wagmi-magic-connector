@@ -7,11 +7,7 @@
   "type": "module",
   "repository": "https://github.com/magiclabs/wagmi-magic-connector",
   "license": "MIT",
-  "keywords": [
-    "wagmi",
-    "extension",
-    "magic"
-  ],
+  "keywords": ["wagmi", "extension", "magic"],
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc-esm-fix --target='dist' --ext='.js'",
     "format": "rome format . --write",

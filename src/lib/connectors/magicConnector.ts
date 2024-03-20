@@ -30,7 +30,7 @@ export interface MagicOptions {
  */
 
 export interface MagicConnectorParams {
-  chains?: Chain[]
+  chains: readonly Chain[]
   options: MagicOptions
 }
 

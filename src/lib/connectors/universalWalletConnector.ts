@@ -32,7 +32,7 @@ export interface UniversalWalletOptions {
  */
 
 interface UniversalWalletConnectorParams {
-  chains?: Chain[]
+  chains: readonly Chain[]
   options: UniversalWalletOptions
 }
 
