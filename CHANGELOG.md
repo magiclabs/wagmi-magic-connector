@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.0.0
+
+### Major Changes
+
+- Update to support WAGMI v2
+
 ## 1.1.5
 
 ### Patch Changes
