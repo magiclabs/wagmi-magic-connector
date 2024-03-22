@@ -94,7 +94,7 @@ export function dedicatedWalletConnector({
       customLogo: options.customLogo,
       customHeaderText: options.customHeaderText,
       enableSMSLogin: enableSMSLogin,
-      enableEmailLogin: enableEmailLogin || true,
+      enableEmailLogin: enableEmailLogin,
       oauthProviders,
     })) as UserDetails
 

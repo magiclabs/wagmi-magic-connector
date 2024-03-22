@@ -6,6 +6,12 @@
 
 - Update to support WAGMI v2
 
+## 1.1.6
+
+### Patch Changes
+
+- Fix bug where email login couldn't be disabled
+
 ## 1.1.5
 
 ### Patch Changes
