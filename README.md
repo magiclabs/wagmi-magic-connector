@@ -29,16 +29,27 @@ Special thanks to the [Everipedia](https://github.com/EveripediaNetwork) team fo
   - [**Example repositories:**](#example-repositories)
 
 # ⬇️ Install
+Two versions of the `wagmi-magic-connector` are available, each designed to support different WAGMI versions. 
 
-```bash
-npm install @magiclabs/wagmi-connector
-```
+Note: **It is crucial not to mix up these versions to ensure compatibility and functionality.**
 
+**V1**
+This version utilizes WAGMI version 1. To install, use the following command:
+
+`npm install @magiclabs/wagmi-connector@1.1.5`
 or
+`yarn install @magiclabs/wagmi-connector@1.1.5`
 
-```bash
-yarn add @magiclabs/wagmi-connector
-```
+**V2 (Beta)**
+This version utilizes and includes the latest WAGMI v2 features.
+
+To install, use the following command:
+
+`npm install @magiclabs/wagmi-connector`
+or
+`yarn install @magiclabs/wagmi-connector`
+
+We actively encourage the community to participate in testing the versions of `wagmi-magic-connector` and to report [any issues or suggestions](https://github.com/magiclabs/wagmi-magic-connector/issues/new/choose) for improvement. Your feedback is invaluable in helping us enhance the quality and stability of the connector.
 
 # 🔎 Package TL;DR
 
