@@ -1,33 +1,22 @@
-import { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
-  MagicSDKExtensionsOption,
   SDKBase,
 } from '@magic-sdk/provider'
-import type { Chain } from '@wagmi/core'
-import { Magic } from 'magic-sdk'
+import { createConnector, normalizeChainId } from '@wagmi/core'
+import {
+  type MagicConnectorParams,
+  type MagicOptions,
+  magicConnector,
+} from './magicConnector'
+import { UserRejectedRequestError, getAddress } from 'viem'
 import { createModal } from '../modal/view'
-import { MagicConnector, MagicOptions } from './magicConnector'
-import { UserRejectedRequestError } from 'viem'
 
 interface UserDetails {
   email: string
   phoneNumber: string
   oauthProvider: OAuthProvider
-}
-
-interface DedicatedWalletOptions extends MagicOptions {
-  enableEmailLogin?: boolean
-  enableSMSLogin?: boolean
-  oauthOptions?: {
-    providers: OAuthProvider[]
-    callbackUrl?: string
-  }
-  magicSdkConfiguration?: MagicSDKAdditionalConfiguration<
-    string,
-    OAuthExtension[]
-  >
 }
 
 /**
@@ -49,162 +38,212 @@ interface DedicatedWalletOptions extends MagicOptions {
  * @see https://magic.link/docs/dedicated/overview
  */
 
-export class DedicatedWalletConnector extends MagicConnector {
-  magicSDK?: InstanceWithExtensions<SDKBase, OAuthExtension[]>
+interface DedicatedWalletOptions extends MagicOptions {
+  enableEmailLogin?: boolean
+  enableSMSLogin?: boolean
+  oauthOptions?: {
+    providers: OAuthProvider[]
+    callbackUrl?: string
+  }
   magicSdkConfiguration?: MagicSDKAdditionalConfiguration<
     string,
-    MagicSDKExtensionsOption<OAuthExtension['name']>
+    OAuthExtension[]
   >
-  enableSMSLogin: boolean
-  enableEmailLogin: boolean
-  oauthProviders: OAuthProvider[]
-  oauthCallbackUrl?: string
-  magicOptions: MagicOptions
+}
 
-  constructor(config: { chains?: Chain[]; options: DedicatedWalletOptions }) {
-    super(config)
-    this.magicSdkConfiguration = config.options.magicSdkConfiguration
-    this.oauthProviders = config.options.oauthOptions?.providers || []
-    this.oauthCallbackUrl = config.options.oauthOptions?.callbackUrl
-    this.enableSMSLogin = config.options.enableSMSLogin || false
-    this.enableEmailLogin = config.options.enableEmailLogin || true
-    this.magicOptions = config.options
-  }
+export interface DedicatedWalletConnectorParams extends MagicConnectorParams {
+  options: DedicatedWalletOptions
+}
 
-  /**
-   * Get the Magic Instance
-   * @throws {Error} if Magic API Key is not provided
-   */
-  getMagicSDK(): InstanceWithExtensions<SDKBase, OAuthExtension[]> {
-    if (!this.magicSDK) {
-      this.magicSDK = new Magic(this.magicOptions.apiKey, {
-        ...this.magicSdkConfiguration,
-        extensions: [new OAuthExtension()],
-      })
-    }
-    return this.magicSDK
-  }
+export function dedicatedWalletConnector({
+  chains,
+  options,
+}: DedicatedWalletConnectorParams) {
+  let {
+    id,
+    name,
+    type,
+    isModalOpen,
+    getAccount,
+    getMagicSDK,
+    getProvider,
+    onAccountsChanged,
+  } = magicConnector({
+    chains,
+    options: { ...options, connectorType: 'dedicated' },
+  })
 
-  /**
-   * Connect method attempts to connects to wallet using Dedicated Wallet modal
-   * this will open a modal for the user to select their wallet
-   */
-  async connect() {
-    if (!this.magicOptions.apiKey)
-      throw new Error('Magic API Key is not provided.')
-
-    const provider = await this.getProvider()
-
-    if (provider?.on) {
-      provider.on('accountsChanged', this.onAccountsChanged)
-      provider.on('chainChanged', this.onChainChanged)
-      provider.on('disconnect', this.onDisconnect)
-    }
-
-    // Check if we have a chainId, in case of error just assign 0 for legacy
-    let chainId: number
-    try {
-      chainId = await this.getChainId()
-    } catch {
-      chainId = 0
-    }
-
-    // if there is a user logged in, return the user
-    if (await this.isAuthorized()) {
-      return {
-        provider,
-        chain: {
-          id: chainId,
-          unsupported: false,
-        },
-        account: await this.getAccount(),
-      }
-    }
-
-    // open the modal and process the magic login steps
-    if (!this.isModalOpen) {
-      const modalOutput = await this.getUserDetailsByForm(
-        this.enableSMSLogin,
-        this.enableEmailLogin,
-        this.oauthProviders,
-      )
-
-      const magic = this.getMagicSDK()
-
-      // LOGIN WITH MAGIC USING OAUTH PROVIDER
-      if (modalOutput.oauthProvider)
-        await magic.oauth.loginWithRedirect({
-          provider: modalOutput.oauthProvider,
-          redirectURI: this.oauthCallbackUrl || window.location.href,
-        })
-
-      // LOGIN WITH MAGIC USING EMAIL
-      if (modalOutput.email)
-        await magic.auth.loginWithEmailOTP({
-          email: modalOutput.email,
-        })
-
-      // LOGIN WITH MAGIC USING PHONE NUMBER
-      if (modalOutput.phoneNumber)
-        await magic.auth.loginWithSMS({
-          phoneNumber: modalOutput.phoneNumber,
-        })
-
-      if (await magic.user.isLoggedIn())
-        return {
-          account: await this.getAccount(),
-          chain: {
-            id: chainId,
-            unsupported: false,
-          },
-          provider,
-        }
-    }
-    throw new UserRejectedRequestError(Error('User Rejected Request'))
-  }
-
-  /**
-   * checks if user is authorized with Magic.
-   * It also checks for oauth redirect result incase user
-   * comes from OAuth flow redirect.
-   *  (without this check, user will not be logged in after oauth redirect)
-   */
-  async isAuthorized() {
-    try {
-      const magic = this.getMagicSDK()
-
-      const isLoggedIn = await magic.user.isLoggedIn()
-      if (isLoggedIn) return true
-
-      const result = await magic.oauth.getRedirectResult()
-      return result !== null
-    } catch {}
-    return false
-  }
+  const oauthProviders = options.oauthOptions?.providers ?? []
+  const oauthCallbackUrl = options.oauthOptions?.callbackUrl
+  const enableSMSLogin = options.enableSMSLogin ?? false
+  const enableEmailLogin = options.enableEmailLogin ?? true
 
   /**
    * This method is used to get user details from the modal UI
    * It first creates the modal UI and then waits for the user to
    * fill in the details and submit the form.
    */
-  async getUserDetailsByForm(
+  const getUserDetailsByForm = async (
     enableSMSLogin: boolean,
     enableEmailLogin: boolean,
     oauthProviders: OAuthProvider[],
-  ): Promise<UserDetails> {
+  ): Promise<UserDetails> => {
     const output: UserDetails = (await createModal({
-      accentColor: this.magicOptions.accentColor,
-      isDarkMode: this.magicOptions.isDarkMode,
-      customLogo: this.magicOptions.customLogo,
-      customHeaderText: this.magicOptions.customHeaderText,
+      accentColor: options.accentColor,
+      isDarkMode: options.isDarkMode,
+      customLogo: options.customLogo,
+      customHeaderText: options.customHeaderText,
       enableSMSLogin: enableSMSLogin,
       enableEmailLogin: enableEmailLogin,
       oauthProviders,
     })) as UserDetails
 
-    this.isModalOpen = false
+    isModalOpen = false
     return output
   }
-}
 
-export class MagicAuthConnector extends DedicatedWalletConnector {}
+  return createConnector((config) => ({
+    id,
+    type,
+    name,
+    getProvider,
+    connect: async function () {
+      if (!options.apiKey) {
+        throw new Error('Magic API Key is not provided.')
+      }
+
+      const provider = await getProvider()
+
+      if (provider?.on) {
+        provider.on('accountsChanged', this.onAccountsChanged.bind(this))
+        provider.on('chainChanged', this.onChainChanged.bind(this))
+        provider.on('disconnect', this.onDisconnect.bind(this))
+      }
+
+      let chainId: number
+      try {
+        chainId = await this.getChainId()
+      } catch {
+        chainId = 0
+      }
+
+      if (await this.isAuthorized()) {
+        return {
+          chainId,
+          accounts: [await getAccount()],
+        }
+      }
+
+      if (!isModalOpen) {
+        const modalOutput = await getUserDetailsByForm(
+          enableSMSLogin,
+          enableEmailLogin,
+          oauthProviders,
+        )
+
+        const magic = getMagicSDK() as InstanceWithExtensions<
+          SDKBase,
+          OAuthExtension[]
+        >
+
+        // LOGIN WITH MAGIC USING OAUTH PROVIDER
+        if (modalOutput.oauthProvider)
+          await magic.oauth.loginWithRedirect({
+            provider: modalOutput.oauthProvider,
+            redirectURI: oauthCallbackUrl ?? window.location.href,
+          })
+
+        // LOGIN WITH MAGIC USING EMAIL
+        if (modalOutput.email)
+          await magic.auth.loginWithEmailOTP({
+            email: modalOutput.email,
+          })
+
+        // LOGIN WITH MAGIC USING PHONE NUMBER
+        if (modalOutput.phoneNumber)
+          await magic.auth.loginWithSMS({
+            phoneNumber: modalOutput.phoneNumber,
+          })
+
+        if (await magic.user.isLoggedIn())
+          return {
+            accounts: [await getAccount()],
+            chainId,
+          }
+      }
+      throw new UserRejectedRequestError(Error('User Rejected Request'))
+    },
+
+    disconnect: async () => {
+      try {
+        const magic = getMagicSDK()
+        await magic?.wallet.disconnect()
+        config.emitter.emit('disconnect')
+      } catch (error) {
+        console.error('Error disconnecting from Magic SDK:', error)
+      }
+    },
+
+    getAccounts: async () => {
+      const provider = await getProvider()
+      const accounts = (await provider?.request({
+        method: 'eth_accounts',
+      })) as string[]
+      return accounts.map((x) => getAddress(x))
+    },
+
+    getChainId: async (): Promise<number> => {
+      const provider = await getProvider()
+      if (provider) {
+        const chainId = await provider.request({
+          method: 'eth_chainId',
+          params: [],
+        })
+        return normalizeChainId(chainId)
+      }
+      const networkOptions = options.magicSdkConfiguration?.network
+      if (typeof networkOptions === 'object') {
+        const chainID = networkOptions.chainId
+        if (chainID) return normalizeChainId(chainID)
+      }
+      throw new Error('Chain ID is not defined')
+    },
+
+    isAuthorized: async () => {
+      try {
+        const magic = getMagicSDK() as InstanceWithExtensions<
+          SDKBase,
+          OAuthExtension[]
+        >
+
+        if (!magic) {
+          return false
+        }
+
+        const isLoggedIn = await magic.user.isLoggedIn()
+        if (isLoggedIn) return true
+
+        const result = await magic.oauth.getRedirectResult()
+        return result !== null
+      } catch {}
+      return false
+    },
+
+    onAccountsChanged,
+
+    onChainChanged(chain) {
+      const chainId = normalizeChainId(chain)
+      config.emitter.emit('change', { chainId })
+    },
+
+    async onConnect(connectInfo) {
+      const chainId = normalizeChainId(connectInfo.chainId)
+      const accounts = await this.getAccounts()
+      config.emitter.emit('connect', { accounts, chainId })
+    },
+
+    onDisconnect: () => {
+      config.emitter.emit('disconnect')
+    },
+  }))
+}
