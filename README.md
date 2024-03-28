@@ -280,12 +280,19 @@ pass the ```client``` prop with ```createClient``` instance to the `WagmiConfig`
 // ...
 const { chains, publicClient, webSocketPublicClient } =
   configureChains(YOUR_CHAIN_CONFIG);
+
+const magicApiKey = process.env.NEXT_PUBLIC_MAGIC_API_KEY
+const magicWallet = getRainbowMagicWallet({
+  chains: wagmiChains,
+  apiKey: magicApiKey
+})
+
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
     wallets: [
       //... other wallets connectors
-      rainbowMagicConnector({ chains }),
+      magicWallet,
     ],
   },
 ]);
