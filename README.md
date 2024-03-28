@@ -222,32 +222,50 @@ To use the connector with Rainbow kit, create a new file `RainbowMagicConnector.
 ```javascript
 // RainbowMagicConnector.ts
 
-import { UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+// RainbowMagicConnector.ts
 
-export const rainbowMagicConnector = ({ chains }: any) => ({
+import { dedicatedWalletConnector } from '@magiclabs/wagmi-connector'
+import { Wallet, WalletDetailsParams } from '@rainbow-me/rainbowkit'
+import { CreateWalletFn } from '@rainbow-me/rainbowkit/dist/wallets/Wallet'
+import { Chain } from 'wagmi/chains'
+import { createConnector as createWagmiConnector } from 'wagmi'
+
+export const getRainbowMagicWallet = (options): CreateWalletFn => {
+  return () => rainbowMagicWallet(options)
+}
+
+export const rainbowMagicWallet = ({
+  chains,
+  apiKey
+}: {
+  chains: Chain[]
+  apiKey: string
+}): Wallet => ({
   id: 'magic',
   name: 'Magic',
-  iconUrl: 'https://svgshare.com/i/iJK.svg',
+  rdns: 'Magic',
+  iconUrl: 'https://dashboard.magic.link/images/logo.svg',
   iconBackground: '#fff',
-  createConnector: () => {
-    const connector = new UniversalWalletConnector({
-      chains: chains,
-      options: {
-        apiKey: 'YOUR_MAGIC_CONNECT_API_KEY',
-        magicSdkConfiguration: {
-          network: {
-            rpcUrl: 'https://polygon-rpc.com', // your ethereum, polygon, or optimism mainnet/testnet rpc URL
-            chainId: 137,
-          },
-        },
-        //...Other options (check out full API below)
-      },
-    });
-    return {
-      connector,
-    };
-  },
-});
+  installed: true,
+  downloadUrls: {},
+  createConnector: (walletDetails: WalletDetailsParams) =>
+    createWagmiConnector((config) => ({
+      ...dedicatedWalletConnector({
+        chains: chains,
+        options: {
+          apiKey: apiKey,
+          magicSdkConfiguration: {
+            network: {
+              rpcUrl: '<RPC_URL>',
+              chainId: 1
+            }
+          }
+          //...Other options (check out full API below)
+        }
+      })(config),
+      ...walletDetails
+    }))
+})
 ```
 
 > Note: `options.magicSdkConfiguration.network.chainId` is mandatory for the integration with RainbowKit
