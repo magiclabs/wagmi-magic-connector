@@ -1,6 +1,7 @@
 import type { MagicSDKAdditionalConfiguration } from '@magic-sdk/provider'
 import type { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider'
 import type { EthNetworkConfiguration } from '@magic-sdk/types'
+import { Magic } from 'magic-sdk';
 import { createConnector } from '@wagmi/core'
 import { normalizeChainId } from '../utils'
 import { magicConnector } from './magicConnector'
@@ -53,7 +54,7 @@ export function universalWalletConnector({
     options: { ...options, connectorType: 'universal' },
   })
 
-  const magic = getMagicSDK()
+  let magic = getMagicSDK()
 
   const registerProviderEventListeners = (
     provider: RPCProviderModule,
@@ -141,7 +142,44 @@ export function universalWalletConnector({
       }
       throw new Error('Chain ID is not defined')
     },
+    switchChain: async function ({ chainId }: { chainId: number }) {
+      if (!options.networks) {
+        throw new Error('switch chain not supported: please provide networks in options');
+      }
+      const normalizedChainId = normalizeChainId(chainId);
+      const chain = chains.find((x) => x.id === normalizedChainId);
 
+      if (!chain)
+        throw new Error(`Unsupported chainId: ${chainId}`);
+
+      const network = options.networks.find((x) => typeof x === 'object' && x.chainId
+        ? normalizeChainId(x.chainId) === normalizedChainId
+        : normalizeChainId(x as bigint | number | string) === normalizedChainId);
+
+      if (!network)
+        throw new Error(`Unsupported chainId: ${chainId}`);
+
+      const account = await getAccount();
+      const provider = await getProvider();
+
+      if (provider?.off) {
+        provider.off('accountsChanged', onAccountsChanged);
+        provider.off('chainChanged', this.onChainChanged);
+        provider.off('disconnect', this.onDisconnect);
+      }
+
+      magic = new Magic(options.apiKey, {
+        ...options.magicSdkConfiguration,
+        network: network,
+      });
+
+      registerProviderEventListeners(magic.rpcProvider, this.onChainChanged, this.onDisconnect);
+
+      this.onChainChanged(chain.id.toString());
+      onAccountsChanged([account]);
+
+      return chain;
+  },
     onDisconnect: () => {
       config.emitter.emit('disconnect')
     },
