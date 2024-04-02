@@ -54,7 +54,7 @@ export function universalWalletConnector({
     options: { ...options, connectorType: 'universal' },
   })
 
-  let magic = getMagicSDK()
+  const magic = getMagicSDK()
 
   const registerProviderEventListeners = (
     provider: RPCProviderModule,
@@ -72,9 +72,10 @@ export function universalWalletConnector({
     id,
     name,
     type,
+    magic,
     getProvider,
     connect: async function () {
-      await magic?.wallet.connectWithUI()
+      await this.magic?.wallet.connectWithUI()
       const provider = await getProvider()
       const chainId = await this.getChainId()
       provider &&
@@ -110,17 +111,17 @@ export function universalWalletConnector({
       const accounts = await this.getAccounts()
       config.emitter.emit('connect', { accounts, chainId })
     },
-    disconnect: async () => {
+    async disconnect() {
       try {
-        await magic?.wallet.disconnect()
+        await this.magic?.wallet.disconnect()
         config.emitter.emit('disconnect')
       } catch (error) {
         console.error('Error disconnecting from Magic SDK:', error)
       }
     },
-    isAuthorized: async () => {
+    async isAuthorized() {
       try {
-        const walletInfo = await magic?.wallet.getInfo()
+        const walletInfo = await (this.magic as any)?.wallet.getInfo()
         return !!walletInfo
       } catch {
         return false
@@ -168,12 +169,12 @@ export function universalWalletConnector({
         provider.off('disconnect', this.onDisconnect);
       }
 
-      magic = new Magic(options.apiKey, {
+      this.magic = new Magic(options.apiKey, {
         ...options.magicSdkConfiguration,
         network: network,
       });
 
-      registerProviderEventListeners(magic.rpcProvider, this.onChainChanged, this.onDisconnect);
+      registerProviderEventListeners(this.magic.rpcProvider, this.onChainChanged, this.onDisconnect);
 
       this.onChainChanged(chain.id.toString());
       onAccountsChanged([account]);
