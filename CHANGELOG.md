@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.1.0
+
+### Minor Changes
+
+- 0ab4b4c: Adds redirect result to localStorage
+
 ## 2.0.0
 
 ### Major Changes
