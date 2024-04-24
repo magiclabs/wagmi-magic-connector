@@ -160,6 +160,8 @@ const connector = new DedicatedWalletConnector({
 })
 ```
 
+To retrieve the Magic redirect result when a user is authenticated and logged in, use `JSON.parse(localStorage.getItem("magicRedirectResult"))`. This will give you access to the redirect result object. The object will be removed from localStorage once the user disconnects.
+
 
 ## 📲 Enable SMS Authentication
 
