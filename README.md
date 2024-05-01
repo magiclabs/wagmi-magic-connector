@@ -66,10 +66,10 @@ DEPRECATED: `MagicAuthConnector` and `MagicConnectConnector` have been replaced 
 # ⭐ Usage
 
 ```javascript
-import { DedicatedWalletConnector, UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+import { dedicatedWalletConnector, universalWalletConnector } from '@magiclabs/wagmi-connector';
 
 // Dedicated Wallet integration
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
@@ -77,7 +77,7 @@ const connector = new DedicatedWalletConnector({
 });
 
 // Universal Wallet integration 
-const connector = new UniversalWalletConnector({
+const connector = universalWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
@@ -149,7 +149,7 @@ You can provide a callback URL to redirect the user to after authentication. the
 You configure OAuth with magic by adding the following options to the connector:
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     oauthOptions : {
@@ -168,7 +168,7 @@ To retrieve the Magic redirect result when a user is authenticated and logged in
 You can enable SMS authentication by adding the following options to the connector:
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableSMSLogin: true, //optional (default: false)
@@ -184,7 +184,7 @@ You have to enable SMS authentication in your [Magic dashboard](https://dashboar
 By default Email is set to true as default. if you wish to remove Email OTP, pass `enableEmailLogin: false` in options object as follows :
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableEmailLogin: false, //optional (default: true)
@@ -199,9 +199,9 @@ const connector = new DedicatedWalletConnector({
 You can customize the modal's theme, default accent color, logo and header text.
 
 ```javascript
-import { DedicatedWalletConnector } from '@magiclabs/wagmi-connector';
+import { dedicatedWalletConnector } from '@magiclabs/wagmi-connector';
 
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY,
     accentColor: '#ff0000',
@@ -224,7 +224,7 @@ To use the connector with Rainbow kit, create a new file `RainbowMagicConnector.
 ```javascript
 // RainbowMagicConnector.ts
 
-import { UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+import { universalWalletConnector } from '@magiclabs/wagmi-connector';
 
 export const rainbowMagicConnector = ({ chains }: any) => ({
   id: 'magic',
@@ -232,7 +232,7 @@ export const rainbowMagicConnector = ({ chains }: any) => ({
   iconUrl: 'https://svgshare.com/i/iJK.svg',
   iconBackground: '#fff',
   createConnector: () => {
-    const connector = new UniversalWalletConnector({
+    const connector = universalWalletConnector({
       chains: chains,
       options: {
         apiKey: 'YOUR_MAGIC_CONNECT_API_KEY',
