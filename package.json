@@ -1,5 +1,5 @@
 {
-  "name": "@arch-protocol/wagmi-magic-connector",
+  "name": "@archprotocol/wagmi-magic-connector",
   "version": "2.1.3",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
