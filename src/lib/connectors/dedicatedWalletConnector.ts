@@ -4,7 +4,7 @@ import type {
   MagicSDKAdditionalConfiguration,
   SDKBase,
 } from '@magic-sdk/provider'
-import { createConnector, normalizeChainId } from '@wagmi/core'
+import { createConnector } from '@wagmi/core'
 import {
   type MagicConnectorParams,
   type MagicOptions,
@@ -200,12 +200,12 @@ export function dedicatedWalletConnector({
           method: 'eth_chainId',
           params: [],
         })
-        return normalizeChainId(chainId)
+        return Number(chainId)
       }
       const networkOptions = options.magicSdkConfiguration?.network
       if (typeof networkOptions === 'object') {
         const chainID = networkOptions.chainId
-        if (chainID) return normalizeChainId(chainID)
+        if (chainID) return Number(chainID)
       }
       throw new Error('Chain ID is not defined')
     },
@@ -237,12 +237,12 @@ export function dedicatedWalletConnector({
     onAccountsChanged,
 
     onChainChanged(chain) {
-      const chainId = normalizeChainId(chain)
+      const chainId = Number(chain)
       config.emitter.emit('change', { chainId })
     },
 
     async onConnect(connectInfo) {
-      const chainId = normalizeChainId(connectInfo.chainId)
+      const chainId = Number(connectInfo.chainId)
       const accounts = await this.getAccounts()
       config.emitter.emit('connect', { accounts, chainId })
     },
