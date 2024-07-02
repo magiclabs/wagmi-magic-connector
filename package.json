@@ -1,6 +1,6 @@
 {
   "name": "@magiclabs/wagmi-connector",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,11 +25,10 @@
   },
   "dependencies": {
     "@changesets/cli": "^2.24.0",
-    "@magic-ext/oauth": "^12.3.0",
-    "@magic-sdk/provider": "^18.3.0",
-    "@wagmi/connectors": "^4.1.14",
-    "@wagmi/core": "^2.6.5",
-    "magic-sdk": "^18.3.0",
+    "@magic-ext/oauth": "^22.0.7",
+    "@magic-sdk/provider": "^28.0.6",
+    "@wagmi/core": "^2.11.6",
+    "magic-sdk": "^28.0.7",
     "tsc-esm-fix": "^2.20.10"
   },
   "devDependencies": {
