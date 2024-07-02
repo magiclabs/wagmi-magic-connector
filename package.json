@@ -5,7 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "repository": "https://github.com/arch-protocol/wagmi-magic-connector",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arch-protocol/wagmi-magic-connector.git"
+  },
   "license": "MIT",
   "keywords": [
     "wagmi",
