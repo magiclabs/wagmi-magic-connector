@@ -1,5 +1,3 @@
 import { DeepLinkPage } from 'magic-sdk'
 
-export {
-  DeepLinkPage,
-}
+export { DeepLinkPage }
