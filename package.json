@@ -1,6 +1,6 @@
 {
   "name": "@archprotocol/wagmi-magic-connector",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
