@@ -1,3 +1,3 @@
-import { DeepLinkPage } from 'magic-sdk'
+import { DeepLinkPage, RPCErrorCode } from 'magic-sdk'
 
-export { DeepLinkPage }
+export { DeepLinkPage, RPCErrorCode }
