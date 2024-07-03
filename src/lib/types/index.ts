@@ -5,11 +5,10 @@ import type {
   SDKBase,
 } from '@magic-sdk/provider'
 import { OAuthRedirectResult } from '@magic-ext/oauth'
-import { DeepLinkPage, MagicUserMetadata } from 'magic-sdk'
+import { MagicUserMetadata } from 'magic-sdk'
 import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
 
 export type {
-  DeepLinkPage,
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
   MagicSDKExtensionsOption,
