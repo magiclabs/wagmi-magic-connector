@@ -5,7 +5,7 @@ import type {
   MagicSDKExtensionsOption,
   SDKBase,
 } from '@magic-sdk/provider'
-import { type EthNetworkConfiguration, Magic } from 'magic-sdk'
+import { type EthNetworkConfiguration, Magic, SupportedLocale } from 'magic-sdk'
 import { type Chain, createWalletClient, custom, getAddress } from 'viem'
 
 const IS_SERVER = typeof window === 'undefined'
@@ -19,6 +19,7 @@ export interface MagicOptions {
   connectorType?: 'dedicated' | 'universal'
   magicSdkConfiguration?: MagicSDKAdditionalConfiguration
   networks?: EthNetworkConfiguration[]
+  locale?: SupportedLocale
 }
 
 /**
@@ -45,15 +46,18 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
     | InstanceWithExtensions<SDKBase, OAuthExtension[]>
     | InstanceWithExtensions<SDKBase, MagicSDKExtensionsOption<string>>
     | null => {
+    const locale = options.locale ?? 'es'
     if (options.connectorType === 'dedicated') {
       return new Magic(options.apiKey, {
         ...options.magicSdkConfiguration,
+        locale,
         extensions: [new OAuthExtension()],
       })
     }
     if (options.connectorType === 'universal') {
       return new Magic(options.apiKey, {
         ...options.magicSdkConfiguration,
+        locale,
         network:
           options.magicSdkConfiguration?.network ?? options?.networks?.[0],
       })
