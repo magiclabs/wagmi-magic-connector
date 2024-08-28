@@ -1,4 +1,4 @@
-import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth2'
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
@@ -148,7 +148,7 @@ export function dedicatedWalletConnector({
 
         // LOGIN WITH MAGIC USING OAUTH PROVIDER
         if (modalOutput.oauthProvider)
-          await magic.oauth2.loginWithRedirect({
+          await magic.oauth.loginWithRedirect({
             provider: modalOutput.oauthProvider,
             redirectURI: oauthCallbackUrl ?? window.location.href,
           })
@@ -222,7 +222,7 @@ export function dedicatedWalletConnector({
         }
 
         const isLoggedIn = await magic.user.isLoggedIn()
-        const result = await magic.oauth2.getRedirectResult()
+        const result = await magic.oauth.getRedirectResult()
         if (result) {
           localStorage.setItem('magicRedirectResult', JSON.stringify(result))
         }
