@@ -1,4 +1,4 @@
-import { OAuthExtension } from '@magic-ext/oauth2'
+import { OAuthExtension } from '@magic-ext/oauth'
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,

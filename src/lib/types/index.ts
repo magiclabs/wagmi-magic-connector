@@ -4,9 +4,9 @@ import type {
   MagicSDKExtensionsOption,
   SDKBase,
 } from '@magic-sdk/provider'
-import { OAuthRedirectResult } from '@magic-ext/oauth2'
+import { OAuthRedirectResult } from '@magic-ext/oauth'
 import { MagicUserMetadata } from 'magic-sdk'
-import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth2'
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
 
 export type {
   InstanceWithExtensions,
