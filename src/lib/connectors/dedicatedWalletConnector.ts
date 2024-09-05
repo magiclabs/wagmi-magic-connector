@@ -230,7 +230,7 @@ export function dedicatedWalletConnector({
         if (isLoggedIn) return true
 
         return result !== null
-      } catch { }
+      } catch {}
       return false
     },
 
