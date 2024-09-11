@@ -1,3 +1,19 @@
-import { DeepLinkPage, RPCErrorCode } from 'magic-sdk'
+import {
+  DeepLinkPage,
+  DeviceVerificationEventEmit,
+  LoginWithEmailOTPEventEmit,
+  LoginWithEmailOTPEventOnReceived,
+  RPCErrorCode,
+  RecencyCheckEventEmit,
+  RecencyCheckEventOnReceived,
+} from 'magic-sdk'
 
-export { DeepLinkPage, RPCErrorCode }
+export {
+  DeepLinkPage,
+  DeviceVerificationEventEmit,
+  LoginWithEmailOTPEventEmit,
+  LoginWithEmailOTPEventOnReceived,
+  RPCErrorCode,
+  RecencyCheckEventEmit,
+  RecencyCheckEventOnReceived,
+}
