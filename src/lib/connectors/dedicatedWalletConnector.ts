@@ -228,7 +228,6 @@ export function dedicatedWalletConnector({
         if (result) {
           localStorage.setItem('magicRedirectResult', JSON.stringify(result))
         }
-        
         return result !== null
       } catch {}
       return false
