@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.1.1
+
+### Patch Changes
+
+- a006951: Fixes lost app state upon page refresh
+
 ## 2.1.0
 
 ### Minor Changes
