@@ -1,6 +1,6 @@
 {
   "name": "@alexandria-labs/wagmi-connector",
-  "version": "2.1.0",
+  "version": "2.1.1-alexandria.0",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,10 +29,10 @@
   "dependencies": {
     "@changesets/cli": "^2.24.0",
     "@magic-ext/oauth": "^22.0.3",
-    "@magic-sdk/provider": "^28.0.2",
+    "@magic-sdk/provider": "^28.6.0",
     "@wagmi/connectors": "^5.0.6",
     "@wagmi/core": "^2.10.4",
-    "magic-sdk": "^28.0.3",
+    "magic-sdk": "^28.6.0",
     "tsc-esm-fix": "^2.20.27"
   },
   "devDependencies": {

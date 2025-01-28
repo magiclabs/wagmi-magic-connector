@@ -177,7 +177,8 @@ export function dedicatedWalletConnector({
     disconnect: async () => {
       try {
         const magic = getMagicSDK()
-        await magic?.wallet.disconnect()
+        await magic?.user.logout()
+        localStorage.removeItem('magicRedirectResult')
         config.emitter.emit('disconnect')
       } catch (error) {
         console.error('Error disconnecting from Magic SDK:', error)
@@ -224,6 +225,9 @@ export function dedicatedWalletConnector({
         if (isLoggedIn) return true
 
         const result = await magic.oauth.getRedirectResult()
+        if (result) {
+          localStorage.setItem('magicRedirectResult', JSON.stringify(result))
+        }
         return result !== null
       } catch {}
       return false
