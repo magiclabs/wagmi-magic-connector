@@ -22,7 +22,8 @@
     "lint:fix": "yarn lint --apply",
     "watch:build": "tsc -p tsconfig.json -w",
     "release": "yarn build && changeset publish",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "prepublishOnly": "yarn build"
   },
   "engines": {
     "node": ">=10"
