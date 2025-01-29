@@ -1,4 +1,27 @@
-# @magiclabs/wagmi-magic-connector
+# @alexandria-labs/wagmi-connector
+
+## 2.1.1-alexandria.0
+
+### Minor Changes
+
+- Synced with upstream v2.1.1 while maintaining switchChain functionality.
+  Includes:
+
+  - Updated Magic SDK dependencies
+  - Preserved switchChain implementation (addressing upstream issue magiclabs/wagmi-magic-connector#22)
+  - Maintained our custom implementation (see PR magiclabs/wagmi-magic-connector#24)
+
+## 2.1.1
+
+### Patch Changes
+
+- a006951: Fixes lost app state upon page refresh
+
+## 2.1.0
+
+### Minor Changes
+
+- 0ab4b4c: Adds redirect result to localStorage
 
 ## 2.0.0
 
