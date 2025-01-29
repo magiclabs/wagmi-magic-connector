@@ -1,5 +1,5 @@
 {
-  "name": "@alexandria-labs/wagmi-connector",
+  "name": "@alexandria-labs/wagmi-magic-connector",
   "version": "2.1.1-alexandria.0",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
