@@ -1,14 +1,11 @@
 {
-  "name": "@alexandria-labs/wagmi-magic-connector",
-  "version": "2.1.1-alexandria.0",
+  "name": "@magiclabs/wagmi-connector",
+  "version": "2.1.1",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Alexandria-Labs/wagmi-magic-connector.git"
-  },
+  "repository": "https://github.com/magiclabs/wagmi-magic-connector",
   "license": "MIT",
   "keywords": [
     "wagmi",
@@ -20,10 +17,7 @@
     "format": "rome format . --write",
     "lint": "rome check .",
     "lint:fix": "yarn lint --apply",
-    "watch:build": "tsc -p tsconfig.json -w",
-    "release": "yarn build && changeset publish",
-    "changeset": "changeset",
-    "prepublishOnly": "yarn build"
+    "watch:build": "tsc -p tsconfig.json -w"
   },
   "engines": {
     "node": ">=10"
