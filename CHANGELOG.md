@@ -1,15 +1,4 @@
-# @alexandria-labs/wagmi-connector
-
-## 2.1.1-alexandria.0
-
-### Minor Changes
-
-- Synced with upstream v2.1.1 while maintaining switchChain functionality.
-  Includes:
-
-  - Updated Magic SDK dependencies
-  - Preserved switchChain implementation (addressing upstream issue magiclabs/wagmi-magic-connector#22)
-  - Maintained our custom implementation (see PR magiclabs/wagmi-magic-connector#24)
+@magiclabs/wagmi-magic-connector
 
 ## 2.1.1
 
