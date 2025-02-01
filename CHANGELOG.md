@@ -1,4 +1,4 @@
-@magiclabs/wagmi-magic-connector
+# @magiclabs/wagmi-magic-connector
 
 ## 2.1.1
 
