@@ -17,7 +17,8 @@
     "format": "rome format . --write",
     "lint": "rome check .",
     "lint:fix": "yarn lint --apply",
-    "watch:build": "tsc -p tsconfig.json -w"
+    "watch:build": "tsc -p tsconfig.json -w",
+    "release": "yarn build && changeset publish"
   },
   "engines": {
     "node": ">=10"
