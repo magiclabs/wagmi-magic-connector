@@ -4,7 +4,7 @@ import type {
   MagicSDKAdditionalConfiguration,
   SDKBase,
 } from '@magic-sdk/provider'
-import { createConnector, normalizeChainId } from '@wagmi/core'
+import { createConnector } from '@wagmi/core'
 import {
   type MagicConnectorParams,
   type MagicOptions,
@@ -13,6 +13,7 @@ import {
 import { UserRejectedRequestError, getAddress } from 'viem'
 import { createModal } from '../modal/view'
 import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider'
+import { normalizeChainId } from '../utils'
 
 interface UserDetails {
   email: string
@@ -242,15 +243,38 @@ export function dedicatedWalletConnector({
       if (!chain) {
         throw new Error(`Unsupported chainId: ${chainId}`)
       }
-
+      console.log('------NORMALIZED CHAIN ID------', normalizedChainId)
       console.log('------CHAIN------', chain)
+      console.log('------OPTIONS------', options)
+      const network = options.networks.find((x) => {
+        console.log('Checking network:', x) // Debugging log
 
-      const network = options.networks.find((x) =>
-        typeof x === 'object' && x.chainId
-          ? normalizeChainId(x.chainId) === normalizedChainId
-          : normalizeChainId(x as bigint | number | string) ===
-            normalizedChainId,
-      )
+        // If x is an object with a chainId, normalize and compare
+        if (typeof x === 'object' && x.chainId) {
+          return normalizeChainId(x.chainId) === normalizedChainId
+        }
+
+        // If x is a string, map "mainnet" and "sepolia" to their correct chain IDs
+        if (typeof x === 'string') {
+          const networkId =
+            x.toLowerCase() === 'mainnet'
+              ? 1
+              : x.toLowerCase() === 'sepolia'
+              ? 11155111
+              : null
+
+          return (
+            networkId !== null &&
+            normalizeChainId(networkId) === normalizedChainId
+          )
+        }
+
+        // If x is a number or bigint, normalize and compare
+        return (
+          normalizeChainId(x as unknown as bigint | number | string) ===
+          normalizedChainId
+        )
+      })
 
       console.log('------NETWORK------', network)
 
@@ -287,6 +311,7 @@ export function dedicatedWalletConnector({
         this.onDisconnect,
       )
       this.onChainChanged(chain.id.toString())
+      console.log('------ACCOUNT------', account)
       this.onAccountsChanged([account])
       return chain
     },
