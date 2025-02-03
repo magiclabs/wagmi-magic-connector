@@ -1,5 +1,12 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.1.2
+
+### Patch Changes
+
+- bfb2d08: - Updated Magic SDK dependencies
+  - Added switchChain implementation
+
 ## 2.1.1
 
 ### Patch Changes
