@@ -78,7 +78,7 @@ export function universalWalletConnector({
 
     async connect() {
       await this.magic?.wallet.connectWithUI()
-      const provider = await this.getProvider() as RPCProviderModule
+      const provider = (await this.getProvider()) as RPCProviderModule
       const chainId = await this.getChainId()
       provider &&
         registerProviderEventListeners(
@@ -147,23 +147,26 @@ export function universalWalletConnector({
     },
     switchChain: async function ({ chainId }: { chainId: number }) {
       if (!options.networks) {
-        throw new Error('switch chain not supported: please provide networks in options')
+        throw new Error(
+          'switch chain not supported: please provide networks in options',
+        )
       }
       const normalizedChainId = normalizeChainId(chainId)
       const chain = chains.find((x) => x.id === normalizedChainId)
 
-      if (!chain)
-        throw new Error(`Unsupported chainId: ${chainId}`)
+      if (!chain) throw new Error(`Unsupported chainId: ${chainId}`)
 
-      const network = options.networks.find((x) => typeof x === 'object' && x.chainId
-        ? normalizeChainId(x.chainId) === normalizedChainId
-        : normalizeChainId(x as bigint | number | string) === normalizedChainId)
+      const network = options.networks.find((x) =>
+        typeof x === 'object' && x.chainId
+          ? normalizeChainId(x.chainId) === normalizedChainId
+          : normalizeChainId(x as bigint | number | string) ===
+            normalizedChainId,
+      )
 
-      if (!network)
-        throw new Error(`Unsupported chainId: ${chainId}`)
+      if (!network) throw new Error(`Unsupported chainId: ${chainId}`)
 
       const account = await this.getAccount()
-      const provider = await this.getProvider() as RPCProviderModule
+      const provider = (await this.getProvider()) as RPCProviderModule
 
       if (provider?.off) {
         provider.off('accountsChanged', this.onAccountsChanged)
@@ -171,24 +174,32 @@ export function universalWalletConnector({
         provider.off('disconnect', this.onDisconnect)
       }
 
-      const newOptions: MagicOptions = {...options, connectorType: 'universal'}
+      const newOptions: MagicOptions = {
+        ...options,
+        connectorType: 'universal',
+      }
       newOptions.magicSdkConfiguration!.network = network
-      
-      const { getAccount, getMagicSDK, getProvider, onAccountsChanged, } = magicConnector({
+
+      const { getAccount, getMagicSDK, getProvider, onAccountsChanged } =
+        magicConnector({
           chains,
           options: newOptions,
-      })
+        })
 
       this.getAccount = getAccount
       this.magic = getMagicSDK()
       this.getProvider = getProvider
       this.onAccountsChanged = onAccountsChanged
-      
-      registerProviderEventListeners(this.magic!.rpcProvider, this.onChainChanged, this.onDisconnect)
+
+      registerProviderEventListeners(
+        this.magic!.rpcProvider,
+        this.onChainChanged,
+        this.onDisconnect,
+      )
       this.onChainChanged(chain.id.toString())
       this.onAccountsChanged([account])
       return chain
-  },
+    },
     onDisconnect: () => {
       config.emitter.emit('disconnect')
     },
