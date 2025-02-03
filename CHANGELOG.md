@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - bfb2d08: - Updated Magic SDK dependencies
-  - Added switchChain implementation
+  - Added switchChain implementation for Universal connector
 
 ## 2.1.1
 
