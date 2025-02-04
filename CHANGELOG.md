@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.0
+
+### Minor Changes
+
+- d0614c4: Adds switchChain to Dedicated Wallet connector
+
 ## 2.1.2
 
 ### Patch Changes
