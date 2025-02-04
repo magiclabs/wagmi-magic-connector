@@ -4,7 +4,7 @@ import type {
   MagicSDKAdditionalConfiguration,
   SDKBase,
 } from '@magic-sdk/provider'
-import { createConnector, normalizeChainId } from '@wagmi/core'
+import { createConnector } from '@wagmi/core'
 import {
   type MagicConnectorParams,
   type MagicOptions,
@@ -12,6 +12,8 @@ import {
 } from './magicConnector'
 import { UserRejectedRequestError, getAddress } from 'viem'
 import { createModal } from '../modal/view'
+import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider'
+import { normalizeChainId } from '../utils'
 
 interface UserDetails {
   email: string
@@ -73,6 +75,20 @@ export function dedicatedWalletConnector({
     options: { ...options, connectorType: 'dedicated' },
   })
 
+  const magic = getMagicSDK()
+
+  const registerProviderEventListeners = (
+    provider: RPCProviderModule,
+    onChainChanged: (chain: string) => void,
+    onDisconnect: () => void,
+  ) => {
+    if (provider.on) {
+      provider.on('accountsChanged', onAccountsChanged)
+      provider.on('chainChanged', (chain) => onChainChanged(chain))
+      provider.on('disconnect', onDisconnect)
+    }
+  }
+
   const oauthProviders = options.oauthOptions?.providers ?? []
   const oauthCallbackUrl = options.oauthOptions?.callbackUrl
   const enableSMSLogin = options.enableSMSLogin ?? false
@@ -106,8 +122,11 @@ export function dedicatedWalletConnector({
     id,
     type,
     name,
+    magic,
     getProvider,
-    connect: async function () {
+    getAccount,
+    onAccountsChanged,
+    async connect() {
       if (!options.apiKey) {
         throw new Error('Magic API Key is not provided.')
       }
@@ -174,7 +193,7 @@ export function dedicatedWalletConnector({
       throw new UserRejectedRequestError(Error('User Rejected Request'))
     },
 
-    disconnect: async () => {
+    async disconnect() {
       try {
         const magic = getMagicSDK()
         await magic?.user.logout()
@@ -185,7 +204,7 @@ export function dedicatedWalletConnector({
       }
     },
 
-    getAccounts: async () => {
+    async getAccounts() {
       const provider = await getProvider()
       const accounts = (await provider?.request({
         method: 'eth_accounts',
@@ -210,6 +229,84 @@ export function dedicatedWalletConnector({
       throw new Error('Chain ID is not defined')
     },
 
+    switchChain: async function ({ chainId }: { chainId: number }) {
+      if (!options.networks) {
+        throw new Error(
+          'Switch chain not supported: please provide networks in options',
+        )
+      }
+
+      const normalizedChainId = normalizeChainId(chainId)
+      const chain = chains.find((x) => x.id === normalizedChainId)
+
+      if (!chain) {
+        throw new Error(`Unsupported chainId: ${chainId}`)
+      }
+
+      const network = options.networks.find((x) => {
+        if (typeof x === 'object' && x.chainId) {
+          return normalizeChainId(x.chainId) === normalizedChainId
+        }
+
+        if (typeof x === 'string') {
+          const networkMap: Record<string, number> = {
+            mainnet: 1,
+            sepolia: 11155111,
+            goerli: 5,
+          }
+
+          const networkId = networkMap[x.toLowerCase()] ?? null
+
+          return (
+            networkId !== null &&
+            normalizeChainId(networkId) === normalizedChainId
+          )
+        }
+
+        return (
+          normalizeChainId(x as unknown as bigint | number | string) ===
+          normalizedChainId
+        )
+      })
+
+      const provider = (await this.getProvider()) as RPCProviderModule
+
+      if (provider?.off) {
+        provider.off('accountsChanged', this.onAccountsChanged)
+        provider.off('chainChanged', this.onChainChanged)
+        provider.off('disconnect', this.onDisconnect)
+      }
+
+      const newOptions: MagicOptions = {
+        ...options,
+        connectorType: 'dedicated',
+      }
+      newOptions.magicSdkConfiguration!.network = network
+
+      const { getAccount, getMagicSDK, getProvider, onAccountsChanged } =
+        magicConnector({
+          chains,
+          options: newOptions,
+        })
+
+      this.getAccount = getAccount
+      this.magic = getMagicSDK()
+      this.getProvider = getProvider
+      this.onAccountsChanged = onAccountsChanged
+
+      const account = await this.getAccount()
+
+      registerProviderEventListeners(
+        this.magic!.rpcProvider,
+        this.onChainChanged,
+        this.onDisconnect,
+      )
+      this.onChainChanged(chain.id.toString())
+      config.emitter.emit('change', { accounts: [account] })
+      this.onAccountsChanged([account])
+      return chain
+    },
+
     isAuthorized: async () => {
       try {
         const magic = getMagicSDK() as InstanceWithExtensions<
@@ -232,8 +329,6 @@ export function dedicatedWalletConnector({
       } catch {}
       return false
     },
-
-    onAccountsChanged,
 
     onChainChanged(chain) {
       const chainId = normalizeChainId(chain)
