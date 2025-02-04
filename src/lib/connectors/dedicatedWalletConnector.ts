@@ -10,7 +10,7 @@ import {
   type MagicOptions,
   magicConnector,
 } from './magicConnector'
-import { UserRejectedRequestError, getAddress } from 'viem'
+import { type Address, UserRejectedRequestError, getAddress } from 'viem'
 import { createModal } from '../modal/view'
 import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider'
 import { normalizeChainId } from '../utils'
@@ -294,7 +294,8 @@ export function dedicatedWalletConnector({
       this.getProvider = getProvider
       this.onAccountsChanged = onAccountsChanged
 
-      const account = await this.getAccount()
+      const metadata = await this.magic?.user.getInfo()
+      const account = metadata?.publicAddress as Address
 
       registerProviderEventListeners(
         this.magic!.rpcProvider,
