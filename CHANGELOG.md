@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.1
+
+### Patch Changes
+
+- 0a24b4e: Fixes case where new wallet needs to be generated upon switching chains
+
 ## 2.2.0
 
 ### Minor Changes
