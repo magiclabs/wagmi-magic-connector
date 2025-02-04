@@ -230,7 +230,6 @@ export function dedicatedWalletConnector({
     },
 
     switchChain: async function ({ chainId }: { chainId: number }) {
-      console.log('------SWITCHING CHAINS------')
       if (!options.networks) {
         throw new Error(
           'Switch chain not supported: please provide networks in options',
@@ -243,25 +242,20 @@ export function dedicatedWalletConnector({
       if (!chain) {
         throw new Error(`Unsupported chainId: ${chainId}`)
       }
-      console.log('------NORMALIZED CHAIN ID------', normalizedChainId)
-      console.log('------CHAIN------', chain)
-      console.log('------OPTIONS------', options)
-      const network = options.networks.find((x) => {
-        console.log('Checking network:', x) // Debugging log
 
-        // If x is an object with a chainId, normalize and compare
+      const network = options.networks.find((x) => {
         if (typeof x === 'object' && x.chainId) {
           return normalizeChainId(x.chainId) === normalizedChainId
         }
 
-        // If x is a string, map "mainnet" and "sepolia" to their correct chain IDs
         if (typeof x === 'string') {
-          const networkId =
-            x.toLowerCase() === 'mainnet'
-              ? 1
-              : x.toLowerCase() === 'sepolia'
-              ? 11155111
-              : null
+          const networkMap: Record<string, number> = {
+            mainnet: 1,
+            sepolia: 11155111,
+            goerli: 5,
+          }
+
+          const networkId = networkMap[x.toLowerCase()] ?? null
 
           return (
             networkId !== null &&
@@ -269,16 +263,12 @@ export function dedicatedWalletConnector({
           )
         }
 
-        // If x is a number or bigint, normalize and compare
         return (
           normalizeChainId(x as unknown as bigint | number | string) ===
           normalizedChainId
         )
       })
 
-      console.log('------NETWORK------', network)
-
-      const account = await this.getAccount()
       const provider = (await this.getProvider()) as RPCProviderModule
 
       if (provider?.off) {
@@ -293,7 +283,6 @@ export function dedicatedWalletConnector({
       }
       newOptions.magicSdkConfiguration!.network = network
 
-      console.log('------NEW OPTIONS------', newOptions)
       const { getAccount, getMagicSDK, getProvider, onAccountsChanged } =
         magicConnector({
           chains,
@@ -305,13 +294,15 @@ export function dedicatedWalletConnector({
       this.getProvider = getProvider
       this.onAccountsChanged = onAccountsChanged
 
+      const account = await this.getAccount()
+
       registerProviderEventListeners(
         this.magic!.rpcProvider,
         this.onChainChanged,
         this.onDisconnect,
       )
       this.onChainChanged(chain.id.toString())
-      console.log('------ACCOUNT------', account)
+      config.emitter.emit('change', { accounts: [account] })
       this.onAccountsChanged([account])
       return chain
     },
