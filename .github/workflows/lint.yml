@@ -2,16 +2,19 @@ name: Lint Checks
 on: [push]
 jobs:
   ci:
-    name: Lint using rome
+    name: Lint using ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - name: Installing dependencies
         run: yarn install --frozen-lockfile
-      - name: Lint rome
-        run: yarn rome ci .
+
+      - name: Run ESLint
+        run: yarn eslint .

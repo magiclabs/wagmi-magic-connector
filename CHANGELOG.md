@@ -1,5 +1,36 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.1
+
+### Patch Changes
+
+- 0a24b4e: Fixes case where new wallet needs to be generated upon switching chains
+
+## 2.2.0
+
+### Minor Changes
+
+- d0614c4: Adds switchChain to Dedicated Wallet connector
+
+## 2.1.2
+
+### Patch Changes
+
+- bfb2d08: - Updated Magic SDK dependencies
+  - Added switchChain implementation for Universal connector
+
+## 2.1.1
+
+### Patch Changes
+
+- a006951: Fixes lost app state upon page refresh
+
+## 2.1.0
+
+### Minor Changes
+
+- 0ab4b4c: Adds redirect result to localStorage
+
 ## 2.0.0
 
 ### Major Changes

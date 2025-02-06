@@ -1,6 +1,6 @@
 {
   "name": "@magiclabs/wagmi-connector",
-  "version": "2.0.0",
+  "version": "2.2.1",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,9 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc-esm-fix --target='dist' --ext='.js'",
-    "format": "rome format . --write",
-    "lint": "rome check .",
-    "lint:fix": "yarn lint --apply",
+    "lint": "eslint .",
     "watch:build": "tsc -p tsconfig.json -w",
     "release": "yarn build && changeset publish"
   },
@@ -25,21 +23,32 @@
   },
   "dependencies": {
     "@changesets/cli": "^2.24.0",
-    "@magic-ext/oauth": "^12.3.0",
-    "@magic-sdk/provider": "^18.3.0",
-    "@wagmi/connectors": "^4.1.14",
-    "@wagmi/core": "^2.6.5",
-    "magic-sdk": "^18.3.0",
-    "tsc-esm-fix": "^2.20.10"
+    "@magic-ext/oauth": "^22.0.3",
+    "@magic-sdk/provider": "^28.6.0",
+    "@wagmi/connectors": "^5.0.6",
+    "@wagmi/core": "^2.10.4",
+    "magic-sdk": "^28.6.0",
+    "tsc-esm-fix": "^2.20.27"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
     "changeset": "^0.2.6",
-    "rome": "12.0.0",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^15.14.0",
+    "localforage": "^1.10.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.0.4",
+    "typescript-eslint": "^8.23.0",
     "viem": "2.x"
   },
   "peerDependencies": {
+    "localforage": ">=1.7.4",
     "viem": "2.x"
   },
   "files": [
