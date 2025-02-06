@@ -14,8 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc-esm-fix --target='dist' --ext='.js'",
-    "lint": "rome check .",
-    "lint:fix": "yarn lint --apply",
+    "lint": "eslint .",
     "watch:build": "tsc -p tsconfig.json -w",
     "release": "yarn build && changeset publish"
   },
@@ -32,10 +31,20 @@
     "tsc-esm-fix": "^2.20.27"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
     "changeset": "^0.2.6",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^15.14.0",
     "localforage": "^1.10.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.0.4",
+    "typescript-eslint": "^8.23.0",
     "viem": "2.x"
   },
   "peerDependencies": {
