@@ -2,9 +2,9 @@ import type { MagicSDKAdditionalConfiguration } from '@magic-sdk/provider';
 import type { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider';
 import type { EthNetworkConfiguration } from '@magic-sdk/types';
 import { createConnector } from '@wagmi/core';
+import { type Chain, getAddress } from 'viem';
 import { normalizeChainId } from '../utils';
 import { MagicOptions, magicConnector } from './magicConnector';
-import { type Chain, getAddress } from 'viem';
 
 export interface UniversalWalletOptions {
   apiKey: string;
@@ -69,7 +69,7 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
       await this.magic?.wallet.connectWithUI();
       const provider = (await this.getProvider()) as RPCProviderModule;
       const chainId = await this.getChainId();
-      provider &&
+      if (provider) {
         registerProviderEventListeners(
           provider,
           chain => {
@@ -78,6 +78,7 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
           },
           this.onDisconnect,
         );
+      }
       const account: any = await this.getAccount();
       return {
         accounts: [account],
