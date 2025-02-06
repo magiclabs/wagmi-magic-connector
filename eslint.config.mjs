@@ -7,6 +7,9 @@ import globals from 'globals';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
+    ignores: ['dist/**', 'eslint.config.mjs'],
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     ignores: ['dist/**'],
     plugins: {
