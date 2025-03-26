@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.2
+
+### Patch Changes
+
+- e96163f: Bump magic sdk to latest
+
 ## 2.2.1
 
 ### Patch Changes
@@ -124,8 +130,8 @@
     options: {
       apiKey: environment.MAGIC_API_KEY,
       networks: [
-        { chainId: 1, rpcUrl: "https://your-ethereum-rpc-url" },
-        { chainId: 137, rpcUrl: "https://your-polygon-rpc-url" },
+        { chainId: 1, rpcUrl: 'https://your-ethereum-rpc-url' },
+        { chainId: 137, rpcUrl: 'https://your-polygon-rpc-url' },
         // ...
       ],
     },
