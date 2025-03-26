@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@changesets/cli": "^2.24.0",
-    "@magic-ext/oauth": "^22.0.3",
-    "@magic-sdk/provider": "^28.6.0",
+    "@magic-ext/oauth": "^23.0.3",
+    "@magic-sdk/provider": "^29.0.2",
     "@wagmi/connectors": "^5.0.6",
     "@wagmi/core": "^2.10.4",
-    "magic-sdk": "^28.6.0",
+    "magic-sdk": "^29.0.2",
     "tsc-esm-fix": "^2.20.27"
   },
   "devDependencies": {
