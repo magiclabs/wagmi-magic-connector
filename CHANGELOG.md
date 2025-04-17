@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.3
+
+### Patch Changes
+
+- 62abe5c: The fix properly deep clones the magicSdkConfiguration object when creating newOptions
+
 ## 2.2.2
 
 ### Patch Changes
