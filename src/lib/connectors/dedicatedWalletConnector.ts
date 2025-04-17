@@ -242,8 +242,11 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
       const newOptions: MagicOptions = {
         ...options,
         connectorType: 'dedicated',
+        magicSdkConfiguration: {
+          ...options.magicSdkConfiguration,
+          network,
+        },
       };
-      newOptions.magicSdkConfiguration!.network = network;
 
       const { getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
         chains,
