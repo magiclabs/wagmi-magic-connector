@@ -34,7 +34,7 @@ export interface MagicConnectorParams {
   options: MagicOptions;
 }
 
-export function magicConnector({ chains = [], options }: MagicConnectorParams) {
+export function magicConnector({ chains = [], options }: MagicConnectorParams): any {
   if (!options.apiKey) {
     throw new Error('Magic API Key is required. Get one at https://dashboard.magic.link/');
   }
@@ -66,7 +66,7 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
 
   const getAccount = async () => {
     const provider = await getProvider();
-    const accounts = await provider?.request({
+    const accounts = await (provider as any)?.request({
       method: 'eth_accounts',
     });
     const account = getAddress(accounts[0] as string);
@@ -81,7 +81,7 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
     return createWalletClient({
       account,
       chain,
-      transport: custom(provider),
+      transport: custom(provider as any),
     });
   };
 
