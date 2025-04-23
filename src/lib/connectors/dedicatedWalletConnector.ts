@@ -46,7 +46,7 @@ export interface DedicatedWalletConnectorParams extends MagicConnectorParams {
   options: DedicatedWalletOptions;
 }
 
-export function dedicatedWalletConnector({ chains, options }: DedicatedWalletConnectorParams) {
+export function dedicatedWalletConnector({ chains, options }: DedicatedWalletConnectorParams): any {
   let { id, name, type, isModalOpen, getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
     chains,
     options: { ...options, connectorType: 'dedicated' },
@@ -95,7 +95,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
     return output;
   };
 
-  return createConnector(config => ({
+  return createConnector((config: any) => ({
     id,
     type,
     name,
@@ -176,7 +176,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
     async getAccounts() {
       const provider = await getProvider();
-      const accounts = (await provider?.request({
+      const accounts = (await (provider as any)?.request({
         method: 'eth_accounts',
       })) as string[];
       return accounts.map(x => getAddress(x));
@@ -185,7 +185,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
     getChainId: async (): Promise<number> => {
       const provider = await getProvider();
       if (provider) {
-        const chainId = await provider.request({
+        const chainId = await (provider as any).request({
           method: 'eth_chainId',
           params: [],
         });
@@ -288,12 +288,12 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
       return false;
     },
 
-    onChainChanged(chain) {
+    onChainChanged(chain: string) {
       const chainId = normalizeChainId(chain);
       config.emitter.emit('change', { chainId });
     },
 
-    async onConnect(connectInfo) {
+    async onConnect(connectInfo: { chainId: string }) {
       const chainId = normalizeChainId(connectInfo.chainId);
       const accounts = await this.getAccounts();
       config.emitter.emit('connect', { accounts, chainId });

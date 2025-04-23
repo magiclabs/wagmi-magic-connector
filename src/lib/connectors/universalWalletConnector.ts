@@ -36,7 +36,7 @@ interface UniversalWalletConnectorParams {
   options: UniversalWalletOptions;
 }
 
-export function universalWalletConnector({ chains, options }: UniversalWalletConnectorParams) {
+export function universalWalletConnector({ chains, options }: UniversalWalletConnectorParams): any {
   const { id, name, type, getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
     chains,
     options: { ...options, connectorType: 'universal' },
@@ -56,7 +56,7 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
     }
   };
 
-  return createConnector(config => ({
+  return createConnector((config: any) => ({
     id,
     name,
     type,
@@ -94,11 +94,11 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
       return accounts.map(x => getAddress(x));
     },
 
-    onChainChanged: chain => {
+    onChainChanged: (chain: string) => {
       const chainId = normalizeChainId(chain);
       config.emitter.emit('change', { chainId });
     },
-    async onConnect(connectInfo) {
+    async onConnect(connectInfo: { chainId: string }) {
       const chainId = normalizeChainId(connectInfo.chainId);
       const accounts = await this.getAccounts();
       config.emitter.emit('connect', { accounts, chainId });
@@ -122,7 +122,7 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
     getChainId: async (): Promise<number> => {
       const provider = await getProvider();
       if (provider) {
-        const chainId = await provider.request({
+        const chainId = await (provider as any).request({
           method: 'eth_chainId',
           params: [],
         });
@@ -164,8 +164,11 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
       const newOptions: MagicOptions = {
         ...options,
         connectorType: 'universal',
+        magicSdkConfiguration: {
+          ...options.magicSdkConfiguration,
+          network,
+        },
       };
-      newOptions.magicSdkConfiguration!.network = network;
 
       const { getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
         chains,
