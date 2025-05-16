@@ -10,6 +10,8 @@ import { type Chain, createWalletClient, custom, getAddress } from 'viem';
 
 const IS_SERVER = typeof window === 'undefined';
 
+type EthereumProvider = { request(...args: any): Promise<any> };
+
 export interface MagicOptions {
   apiKey: string;
   accentColor?: string;
@@ -66,15 +68,13 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
 
   const getAccount = async () => {
     const provider = await getProvider();
-    const accounts = await provider?.request({
-      method: 'eth_accounts',
-    });
+    const accounts = await provider?.send('eth_accounts', []);
     const account = getAddress(accounts[0] as string);
     return account;
   };
 
   const getWalletClient = async ({ chainId }: { chainId?: number } = {}) => {
-    const provider = await getProvider();
+    const provider = (await getProvider()) as unknown as EthereumProvider;
     const account = await getAccount();
     const chain = chains.find(x => x.id === chainId) ?? chains[0];
     if (!provider) throw new Error('provider is required.');

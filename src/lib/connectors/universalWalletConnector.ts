@@ -122,10 +122,7 @@ export function universalWalletConnector({ chains, options }: UniversalWalletCon
     getChainId: async (): Promise<number> => {
       const provider = await getProvider();
       if (provider) {
-        const chainId = await provider.request({
-          method: 'eth_chainId',
-          params: [],
-        });
+        const chainId = await provider.send('eth_chainId', []);
         return normalizeChainId(chainId);
       }
       const networkOptions = options.magicSdkConfiguration?.network;
