@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.2.4
+
+### Patch Changes
+
+- 2dfac7f: Updates magic provider to use send instead of request
+
 ## 2.2.3
 
 ### Patch Changes
