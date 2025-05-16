@@ -1,11 +1,11 @@
 import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth';
 import type { InstanceWithExtensions, MagicSDKAdditionalConfiguration, SDKBase } from '@magic-sdk/provider';
+import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider';
 import { createConnector } from '@wagmi/core';
-import { type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
 import { type Address, UserRejectedRequestError, getAddress } from 'viem';
 import { createModal } from '../modal/view';
-import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider';
 import { normalizeChainId } from '../utils';
+import { type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
 
 interface UserDetails {
   email: string;
@@ -176,19 +176,14 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
     async getAccounts() {
       const provider = await getProvider();
-      const accounts = (await provider?.request({
-        method: 'eth_accounts',
-      })) as string[];
+      const accounts = (await provider?.send('eth_accounts', [])) as string[];
       return accounts.map(x => getAddress(x));
     },
 
     getChainId: async (): Promise<number> => {
       const provider = await getProvider();
       if (provider) {
-        const chainId = await provider.request({
-          method: 'eth_chainId',
-          params: [],
-        });
+        const chainId = await provider.send('eth_chainId', []);
         return normalizeChainId(chainId);
       }
       const networkOptions = options.magicSdkConfiguration?.network;
