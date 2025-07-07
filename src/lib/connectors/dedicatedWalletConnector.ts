@@ -274,11 +274,13 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) return true;
 
-        const result = await magic.oauth.getRedirectResult();
-        if (result) {
-          localStorage.setItem('magicRedirectResult', JSON.stringify(result));
+        if (oauthProviders?.length > 0) {
+          const result = await magic.oauth.getRedirectResult();
+          if (result) {
+            localStorage.setItem('magicRedirectResult', JSON.stringify(result));
+            return !!result;
+          }
         }
-        return result !== null;
       } catch {}
       return false;
     },
