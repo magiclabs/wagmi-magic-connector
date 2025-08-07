@@ -1,4 +1,4 @@
-import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth';
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth2';
 import type { InstanceWithExtensions, MagicSDKAdditionalConfiguration, SDKBase } from '@magic-sdk/provider';
 import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider';
 import { createConnector } from '@wagmi/core';
@@ -49,7 +49,7 @@ export interface DedicatedWalletConnectorParams extends MagicConnectorParams {
 export function dedicatedWalletConnector({ chains, options }: DedicatedWalletConnectorParams) {
   let { id, name, type, isModalOpen, getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
     chains,
-    options: { ...options, connectorType: 'dedicated' },
+    options: { ...options },
   });
 
   const magic = getMagicSDK();
@@ -137,7 +137,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
         // LOGIN WITH MAGIC USING OAUTH PROVIDER
         if (modalOutput.oauthProvider)
-          await magic.oauth.loginWithRedirect({
+          await magic.oauth2.loginWithRedirect({
             provider: modalOutput.oauthProvider,
             redirectURI: oauthCallbackUrl ?? window.location.href,
           });
@@ -236,7 +236,6 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
       const newOptions: MagicOptions = {
         ...options,
-        connectorType: 'dedicated',
         magicSdkConfiguration: {
           ...options.magicSdkConfiguration,
           network,
@@ -274,7 +273,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) return true;
 
-        const result = await magic.oauth.getRedirectResult();
+        const result = await magic.oauth2.getRedirectResult({});
         if (result) {
           localStorage.setItem('magicRedirectResult', JSON.stringify(result));
         }

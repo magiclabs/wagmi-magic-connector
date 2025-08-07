@@ -1,4 +1,4 @@
-import { OAuthExtension } from '@magic-ext/oauth';
+import { OAuthExtension } from '@magic-ext/oauth2';
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
@@ -18,7 +18,6 @@ export interface MagicOptions {
   isDarkMode?: boolean;
   customLogo?: string;
   customHeaderText?: string;
-  connectorType?: 'dedicated' | 'universal';
   magicSdkConfiguration?: MagicSDKAdditionalConfiguration;
   networks?: EthNetworkConfiguration[];
 }
@@ -45,19 +44,10 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
     | InstanceWithExtensions<SDKBase, OAuthExtension[]>
     | InstanceWithExtensions<SDKBase, MagicSDKExtensionsOption<string>>
     | null => {
-    if (options.connectorType === 'dedicated') {
-      return new Magic(options.apiKey, {
-        ...options.magicSdkConfiguration,
-        extensions: [new OAuthExtension()],
-      });
-    }
-    if (options.connectorType === 'universal') {
-      return new Magic(options.apiKey, {
-        ...options.magicSdkConfiguration,
-        network: options.magicSdkConfiguration?.network ?? options?.networks?.[0],
-      });
-    }
-    return null;
+    return new Magic(options.apiKey, {
+      ...options.magicSdkConfiguration,
+      extensions: [new OAuthExtension()],
+    });
   };
 
   const getProvider = async () => {
