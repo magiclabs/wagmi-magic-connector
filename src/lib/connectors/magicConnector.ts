@@ -8,7 +8,7 @@ import type {
 import { type EthNetworkConfiguration, Magic } from 'magic-sdk';
 import { type Chain, createWalletClient, custom, getAddress } from 'viem';
 
-const IS_SERVER = typeof window === 'undefined';
+export const IS_SERVER = typeof window === 'undefined';
 
 type EthereumProvider = { request(...args: any): Promise<any> };
 

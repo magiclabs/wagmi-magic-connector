@@ -5,7 +5,7 @@ import { createConnector } from '@wagmi/core';
 import { type Address, UserRejectedRequestError, getAddress } from 'viem';
 import { createModal } from '../modal/view';
 import { normalizeChainId } from '../utils';
-import { type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
+import { type MagicConnectorParams, type MagicOptions, magicConnector, IS_SERVER } from './magicConnector';
 
 interface UserDetails {
   email: string;
@@ -139,7 +139,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         if (modalOutput.oauthProvider)
           await magic.oauth2.loginWithRedirect({
             provider: modalOutput.oauthProvider,
-            redirectURI: oauthCallbackUrl ?? window.location.href,
+            redirectURI: oauthCallbackUrl && !IS_SERVER ? window.location.href : '',
           });
 
         // LOGIN WITH MAGIC USING EMAIL
