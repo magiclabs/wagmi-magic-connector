@@ -19,18 +19,16 @@
     "release": "yarn build && changeset publish"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=18"
   },
   "dependencies": {
-    "@changesets/cli": "^2.24.0",
-    "@magic-ext/oauth": "^23.0.3",
-    "@magic-sdk/provider": "^29.0.2",
+    "@magic-ext/oauth2": "^11.4.1",
     "@wagmi/connectors": "^5.0.6",
     "@wagmi/core": "^2.10.4",
-    "magic-sdk": "^29.0.2",
-    "tsc-esm-fix": "^2.20.27"
+    "magic-sdk": "29.4.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.24.0",
     "@eslint/js": "^9.19.0",
     "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
@@ -41,14 +39,13 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.14.0",
-    "localforage": "^1.10.0",
     "prettier": "^3.3.3",
+    "tsc-esm-fix": "^2.20.27",
     "typescript": "^5.0.4",
     "typescript-eslint": "^8.23.0",
     "viem": "2.x"
   },
   "peerDependencies": {
-    "localforage": ">=1.7.4",
     "viem": "2.x"
   },
   "files": [
