@@ -1,14 +1,9 @@
-import { OAuthExtension } from '@magic-ext/oauth';
-import type {
-  InstanceWithExtensions,
-  MagicSDKAdditionalConfiguration,
-  MagicSDKExtensionsOption,
-  SDKBase,
-} from '@magic-sdk/provider';
+import { OAuthExtension } from '@magic-ext/oauth2';
+
 import { type EthNetworkConfiguration, Magic } from 'magic-sdk';
 import { type Chain, createWalletClient, custom, getAddress } from 'viem';
 
-const IS_SERVER = typeof window === 'undefined';
+export const IS_SERVER = typeof window === 'undefined';
 
 type EthereumProvider = { request(...args: any): Promise<any> };
 
@@ -19,7 +14,7 @@ export interface MagicOptions {
   customLogo?: string;
   customHeaderText?: string;
   connectorType?: 'dedicated' | 'universal';
-  magicSdkConfiguration?: MagicSDKAdditionalConfiguration;
+  magicSdkConfiguration?: any;
   networks?: EthNetworkConfiguration[];
 }
 
@@ -41,23 +36,11 @@ export function magicConnector({ chains = [], options }: MagicConnectorParams) {
     throw new Error('Magic API Key is required. Get one at https://dashboard.magic.link/');
   }
 
-  const getMagicSDK = ():
-    | InstanceWithExtensions<SDKBase, OAuthExtension[]>
-    | InstanceWithExtensions<SDKBase, MagicSDKExtensionsOption<string>>
-    | null => {
-    if (options.connectorType === 'dedicated') {
-      return new Magic(options.apiKey, {
-        ...options.magicSdkConfiguration,
-        extensions: [new OAuthExtension()],
-      });
-    }
-    if (options.connectorType === 'universal') {
-      return new Magic(options.apiKey, {
-        ...options.magicSdkConfiguration,
-        network: options.magicSdkConfiguration?.network ?? options?.networks?.[0],
-      });
-    }
-    return null;
+  const getMagicSDK = (): any => {
+    return new Magic(options.apiKey, {
+      ...options.magicSdkConfiguration,
+      extensions: [new OAuthExtension()],
+    });
   };
 
   const getProvider = async () => {

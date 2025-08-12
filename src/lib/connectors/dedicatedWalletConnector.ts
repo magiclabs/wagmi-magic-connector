@@ -1,11 +1,9 @@
-import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth';
-import type { InstanceWithExtensions, MagicSDKAdditionalConfiguration, SDKBase } from '@magic-sdk/provider';
-import { RPCProviderModule } from '@magic-sdk/provider/dist/types/modules/rpc-provider';
+import type { OAuthProvider } from '@magic-ext/oauth2';
 import { createConnector } from '@wagmi/core';
 import { type Address, UserRejectedRequestError, getAddress } from 'viem';
 import { createModal } from '../modal/view';
 import { normalizeChainId } from '../utils';
-import { type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
+import { IS_SERVER, type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
 
 interface UserDetails {
   email: string;
@@ -39,7 +37,7 @@ interface DedicatedWalletOptions extends MagicOptions {
     providers: OAuthProvider[];
     callbackUrl?: string;
   };
-  magicSdkConfiguration?: MagicSDKAdditionalConfiguration<string, OAuthExtension[]>;
+  magicSdkConfiguration?: any;
 }
 
 export interface DedicatedWalletConnectorParams extends MagicConnectorParams {
@@ -55,13 +53,13 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
   const magic = getMagicSDK();
 
   const registerProviderEventListeners = (
-    provider: RPCProviderModule,
+    provider: any,
     onChainChanged: (chain: string) => void,
     onDisconnect: () => void,
   ) => {
     if (provider.on) {
       provider.on('accountsChanged', onAccountsChanged);
-      provider.on('chainChanged', chain => onChainChanged(chain));
+      provider.on('chainChanged', (chain: string) => onChainChanged(chain));
       provider.on('disconnect', onDisconnect);
     }
   };
@@ -133,13 +131,13 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
       if (!isModalOpen) {
         const modalOutput = await getUserDetailsByForm(enableSMSLogin, enableEmailLogin, oauthProviders);
 
-        const magic = getMagicSDK() as InstanceWithExtensions<SDKBase, OAuthExtension[]>;
+        const magic = getMagicSDK();
 
         // LOGIN WITH MAGIC USING OAUTH PROVIDER
         if (modalOutput.oauthProvider)
-          await magic.oauth.loginWithRedirect({
+          await magic.oauth2.loginWithRedirect({
             provider: modalOutput.oauthProvider,
-            redirectURI: oauthCallbackUrl ?? window.location.href,
+            redirectURI: oauthCallbackUrl && IS_SERVER ? window.location.href : '',
           });
 
         // LOGIN WITH MAGIC USING EMAIL
@@ -226,7 +224,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         return normalizeChainId(x as unknown as bigint | number | string) === normalizedChainId;
       });
 
-      const provider = (await this.getProvider()) as RPCProviderModule;
+      const provider = (await this.getProvider()) as any;
 
       if (provider?.off) {
         provider.off('accountsChanged', this.onAccountsChanged);
@@ -265,7 +263,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
     isAuthorized: async () => {
       try {
-        const magic = getMagicSDK() as InstanceWithExtensions<SDKBase, OAuthExtension[]>;
+        const magic = getMagicSDK();
 
         if (!magic) {
           return false;
@@ -274,7 +272,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) return true;
 
-        const result = await magic.oauth.getRedirectResult();
+        const result = await magic.oauth2.getRedirectResult();
         if (result) {
           localStorage.setItem('magicRedirectResult', JSON.stringify(result));
         }
