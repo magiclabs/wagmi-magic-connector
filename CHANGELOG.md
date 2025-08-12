@@ -1,5 +1,11 @@
 # @magiclabs/wagmi-magic-connector
 
+## 2.3.0
+
+### Minor Changes
+
+- c141db9: Update oauth package and remove universal connector
+
 ## 2.2.4
 
 ### Patch Changes
@@ -117,7 +123,6 @@
   Major version bump to support wagmi v1 ✌️
 
   For migration:
-
   1. update the connector version to 1.0.0
   2. update Wagmi to v1 and install Viem (https://viem.sh) in place of ethers
   3. follow migration guide https://wagmi.sh/react/migration-guide#1xx-breaking-changes to adapt your code to the new wagmi api.
@@ -163,7 +168,6 @@
 ### Patch Changes
 
 - febd0a3: ### Patch Changes
-
   - Fixing a bug that prevents login with email because of a MagicSDK naming convention recent change.
   - Dependencies update.
 
@@ -206,7 +210,6 @@
 ### Minor Changes
 
 - 38dd8cc: ### Major
-
   - Creation of two classes `MagicAuthConnector` & `MagicConnectConnector`
     - `MagicAuthConnector`: Connector integrating with [Magic Auth](https://magic.link/docs/auth/overview). Most of the code comes from previous implementation
     - `MagicConnectConnector`: Connector integrating with [Magic Connect](https://magic.link/docs/connect/overview).
@@ -216,7 +219,6 @@
   - Updated documentation in README to fit changes
 
   ### Minor
-
   - Fixed some typos in the README
   - Fixed Rainbow Kit example in the README and specified that `options.magicSdkConfiguration.network.chainId` needs to be specified. This comes from the fact that in their most recent version Rainbow Kit makes a `getChainId()` call on the connector before calling the `connect()` method.
   - Fixed typo in enableSMSlogin -> enableSMSLogin
