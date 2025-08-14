@@ -137,7 +137,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         if (modalOutput.oauthProvider)
           await magic.oauth2.loginWithRedirect({
             provider: modalOutput.oauthProvider,
-            redirectURI: oauthCallbackUrl && IS_SERVER ? window.location.href : '',
+            redirectURI: oauthCallbackUrl && !IS_SERVER ? window.location.href : '',
           });
 
         // LOGIN WITH MAGIC USING EMAIL
