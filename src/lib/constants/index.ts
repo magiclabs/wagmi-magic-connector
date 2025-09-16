@@ -6,7 +6,7 @@ import {
   RPCErrorCode,
   RecencyCheckEventEmit,
   RecencyCheckEventOnReceived,
-} from 'magic-sdk'
+} from 'magic-sdk';
 
 export {
   DeepLinkPage,
@@ -16,4 +16,4 @@ export {
   RPCErrorCode,
   RecencyCheckEventEmit,
   RecencyCheckEventOnReceived,
-}
+};

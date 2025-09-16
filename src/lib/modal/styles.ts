@@ -42,8 +42,11 @@ export const modalStyles = (accentColor = '#6452f7') => `
   .Magic__closeButton {
     position: absolute;
     top: 0;
+    width: 40px;
+    height: 40px;
+    top: 15px;
     right: 15px;
-    padding: 10px;
+    padding: 6px 10px 10px 10px;
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -120,6 +123,7 @@ export const modalStyles = (accentColor = '#6452f7') => `
       text-align: center;
       color: #D6D6D6;
       font-size: 14px;
+      margin-bottom: 8px;
   }
   .Magic__dark .Magic__divider {
     color: #444;
@@ -147,13 +151,13 @@ export const modalStyles = (accentColor = '#6452f7') => `
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 20px;
     width: 90%;
   }
   .Magic__oauthButton{
     display: block;
-    padding: 5px;
-    border: none;
+    width: fit-content;
+    padding: 0;
     background-color: transparent;
     cursor: pointer;
     border-radius: 100px;
@@ -184,4 +188,4 @@ export const modalStyles = (accentColor = '#6452f7') => `
     font-size: 16px;
     text-transform: capitalize;
   }
-`
+`;
