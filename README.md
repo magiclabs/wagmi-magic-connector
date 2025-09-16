@@ -66,10 +66,10 @@ DEPRECATED: `MagicAuthConnector` and `MagicConnectConnector` have been replaced 
 # ⭐ Usage
 
 ```javascript
-import { DedicatedWalletConnector, UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+import { dedicatedWalletConnector, universalWalletConnector } from '@magiclabs/wagmi-connector';
 
 // Dedicated Wallet integration
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
@@ -77,7 +77,7 @@ const connector = new DedicatedWalletConnector({
 });
 
 // Universal Wallet integration 
-const connector = new UniversalWalletConnector({
+const connector = universalWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     //...Other options
@@ -149,7 +149,7 @@ You can provide a callback URL to redirect the user to after authentication. the
 You configure OAuth with magic by adding the following options to the connector:
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     oauthOptions : {
@@ -168,7 +168,7 @@ To retrieve the Magic redirect result when a user is authenticated and logged in
 You can enable SMS authentication by adding the following options to the connector:
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableSMSLogin: true, //optional (default: false)
@@ -184,7 +184,7 @@ You have to enable SMS authentication in your [Magic dashboard](https://dashboar
 By default Email is set to true as default. if you wish to remove Email OTP, pass `enableEmailLogin: false` in options object as follows :
 
 ```javascript
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY, //required
     enableEmailLogin: false, //optional (default: true)
@@ -199,9 +199,9 @@ const connector = new DedicatedWalletConnector({
 You can customize the modal's theme, default accent color, logo and header text.
 
 ```javascript
-import { DedicatedWalletConnector } from '@magiclabs/wagmi-connector';
+import { dedicatedWalletConnector } from '@magiclabs/wagmi-connector';
 
-const connector = new DedicatedWalletConnector({
+const connector = dedicatedWalletConnector({
   options: {
     apiKey: YOUR_MAGIC_PUBLISHABLE_API_KEY,
     accentColor: '#ff0000',
@@ -224,32 +224,48 @@ To use the connector with Rainbow kit, create a new file `RainbowMagicConnector.
 ```javascript
 // RainbowMagicConnector.ts
 
-import { UniversalWalletConnector } from '@magiclabs/wagmi-connector';
+import { dedicatedWalletConnector } from '@magiclabs/wagmi-connector'
+import { Wallet, WalletDetailsParams } from '@rainbow-me/rainbowkit'
+import { CreateWalletFn } from '@rainbow-me/rainbowkit/dist/wallets/Wallet'
+import { Chain } from 'wagmi/chains'
+import { createConnector as createWagmiConnector } from 'wagmi'
 
-export const rainbowMagicConnector = ({ chains }: any) => ({
+export const getRainbowMagicWallet = (options): CreateWalletFn => {
+  return () => rainbowMagicWallet(options)
+}
+
+export const rainbowMagicWallet = ({
+  chains,
+  apiKey
+}: {
+  chains: Chain[]
+  apiKey: string
+}): Wallet => ({
   id: 'magic',
   name: 'Magic',
-  iconUrl: 'https://svgshare.com/i/iJK.svg',
+  rdns: 'Magic',
+  iconUrl: 'https://dashboard.magic.link/images/logo.svg',
   iconBackground: '#fff',
-  createConnector: () => {
-    const connector = new UniversalWalletConnector({
-      chains: chains,
-      options: {
-        apiKey: 'YOUR_MAGIC_CONNECT_API_KEY',
-        magicSdkConfiguration: {
-          network: {
-            rpcUrl: 'https://polygon-rpc.com', // your ethereum, polygon, or optimism mainnet/testnet rpc URL
-            chainId: 137,
-          },
-        },
-        //...Other options (check out full API below)
-      },
-    });
-    return {
-      connector,
-    };
-  },
-});
+  installed: true,
+  downloadUrls: {},
+  createConnector: (walletDetails: WalletDetailsParams) =>
+    createWagmiConnector((config) => ({
+      ...dedicatedWalletConnector({
+        chains: chains,
+        options: {
+          apiKey: apiKey,
+          magicSdkConfiguration: {
+            network: {
+              rpcUrl: '<RPC_URL>',
+              chainId: 1
+            }
+          }
+          //...Other options (check out full API below)
+        }
+      })(config),
+      ...walletDetails
+    }))
+})
 ```
 
 > Note: `options.magicSdkConfiguration.network.chainId` is mandatory for the integration with RainbowKit
@@ -264,12 +280,19 @@ pass the ```client``` prop with ```createClient``` instance to the `WagmiConfig`
 // ...
 const { chains, publicClient, webSocketPublicClient } =
   configureChains(YOUR_CHAIN_CONFIG);
+
+const magicApiKey = process.env.NEXT_PUBLIC_MAGIC_API_KEY
+const magicWallet = getRainbowMagicWallet({
+  chains: wagmiChains,
+  apiKey: magicApiKey
+})
+
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
     wallets: [
       //... other wallets connectors
-      rainbowMagicConnector({ chains }),
+      magicWallet,
     ],
   },
 ]);
