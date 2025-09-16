@@ -1,12 +1,12 @@
+import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth2';
+import { OAuthRedirectResult } from '@magic-ext/oauth2';
 import type {
   InstanceWithExtensions,
   MagicSDKAdditionalConfiguration,
   MagicSDKExtensionsOption,
   SDKBase,
-} from '@magic-sdk/provider'
-import { OAuthRedirectResult } from '@magic-ext/oauth'
-import { MagicUserMetadata } from 'magic-sdk'
-import type { OAuthExtension, OAuthProvider } from '@magic-ext/oauth'
+} from '@magic-sdk/provider';
+import { MagicUserMetadata } from 'magic-sdk';
 
 export type {
   InstanceWithExtensions,
@@ -17,4 +17,4 @@ export type {
   OAuthProvider,
   OAuthRedirectResult,
   SDKBase,
-}
+};
