@@ -6,9 +6,6 @@ jobs:
   release:
     name: Publish snapshot version
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20, 22]
     env:
       CI: true
     steps:
@@ -21,14 +18,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: Install dependencies1
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Publish
