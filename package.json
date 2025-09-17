@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "watch:build": "tsc -p tsconfig.json -w",
-    "release": "yarn build && changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "engines": {
     "node": ">=18"
