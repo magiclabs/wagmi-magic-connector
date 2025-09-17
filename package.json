@@ -16,7 +16,7 @@
     "build": "tsc -p tsconfig.json && tsc-esm-fix --target='dist' --ext='.js'",
     "lint": "eslint .",
     "watch:build": "tsc -p tsconfig.json -w",
-    "release": "yarn build && changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "engines": {
     "node": ">=18"
