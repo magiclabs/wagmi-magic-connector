@@ -1,6 +1,6 @@
 {
   "name": "@magiclabs/wagmi-connector",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "build": "tsc -p tsconfig.json && tsc-esm-fix --target='dist' --ext='.js'",
     "lint": "eslint .",
     "watch:build": "tsc -p tsconfig.json -w",
-    "release": "yarn build && changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "engines": {
     "node": ">=18"
