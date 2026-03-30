@@ -21,6 +21,7 @@ export const createModal = async (props: {
   isDarkMode?: boolean;
   customLogo?: string;
   customHeaderText?: string;
+  customLoginText?: string;
   enableSMSLogin?: boolean;
   enableEmailLogin?: boolean;
   oauthProviders?: OAuthProvider[];
@@ -89,7 +90,7 @@ export const createModal = async (props: {
           ${
             props.enableSMSLogin || props.enableEmailLogin
               ? ` <button class="Magic__submitButton" type="submit">
-                Log in / Sign up
+                ${props.customLoginText || 'Log in / Sign up'}
               </button>`
               : ''
           }

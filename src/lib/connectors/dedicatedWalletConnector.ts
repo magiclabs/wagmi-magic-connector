@@ -1,6 +1,7 @@
 import type { OAuthProvider } from '@magic-ext/oauth2';
+import type { Magic } from 'magic-sdk';
 import { createConnector } from '@wagmi/core';
-import { type Address, UserRejectedRequestError, getAddress } from 'viem';
+import { UserRejectedRequestError, getAddress } from 'viem';
 import { createModal } from '../modal/view';
 import { normalizeChainId } from '../utils';
 import { IS_SERVER, type MagicConnectorParams, type MagicOptions, magicConnector } from './magicConnector';
@@ -50,20 +51,6 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
     options: { ...options, connectorType: 'dedicated' },
   });
 
-  const magic = getMagicSDK();
-
-  const registerProviderEventListeners = (
-    provider: any,
-    onChainChanged: (chain: string) => void,
-    onDisconnect: () => void,
-  ) => {
-    if (provider.on) {
-      provider.on('accountsChanged', onAccountsChanged);
-      provider.on('chainChanged', (chain: string) => onChainChanged(chain));
-      provider.on('disconnect', onDisconnect);
-    }
-  };
-
   const oauthProviders = options.oauthOptions?.providers ?? [];
   const oauthCallbackUrl = options.oauthOptions?.callbackUrl;
   const enableSMSLogin = options.enableSMSLogin ?? false;
@@ -84,6 +71,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
       isDarkMode: options.isDarkMode,
       customLogo: options.customLogo,
       customHeaderText: options.customHeaderText,
+      customLoginText: options.customLoginText,
       enableSMSLogin: enableSMSLogin,
       enableEmailLogin: enableEmailLogin,
       oauthProviders,
@@ -93,11 +81,24 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
     return output;
   };
 
-  return createConnector(config => ({
+  let magic: Magic | undefined;
+  let magicPromise: Promise<Magic> | undefined;
+
+  const connectorFn = createConnector(config => ({
     id,
     type,
     name,
-    magic,
+    async getMagic(): Promise<Magic> {
+      if (!magicPromise) {
+        magicPromise = getMagicSDK()
+          .then(m => (magic = m))
+          .catch(error => {
+            magicPromise = undefined;
+            throw error;
+          });
+      }
+      return magicPromise;
+    },
     getProvider,
     getAccount,
     onAccountsChanged,
@@ -130,12 +131,11 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
       if (!isModalOpen) {
         const modalOutput = await getUserDetailsByForm(enableSMSLogin, enableEmailLogin, oauthProviders);
-
-        const magic = getMagicSDK();
+        const magic = await this.getMagic();
 
         // LOGIN WITH MAGIC USING OAUTH PROVIDER
         if (modalOutput.oauthProvider)
-          await magic.oauth2.loginWithRedirect({
+          await (magic as any).oauth2.loginWithRedirect({
             provider: modalOutput.oauthProvider,
             redirectURI: oauthCallbackUrl && !IS_SERVER ? window.location.href : '',
           });
@@ -163,7 +163,7 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
 
     async disconnect() {
       try {
-        const magic = getMagicSDK();
+        const magic = await this.getMagic();
         await magic?.user.logout();
         localStorage.removeItem('magicRedirectResult');
         config.emitter.emit('disconnect');
@@ -204,79 +204,33 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
         throw new Error(`Unsupported chainId: ${chainId}`);
       }
 
-      const network = options.networks.find(x => {
-        if (typeof x === 'object' && x.chainId) {
-          return normalizeChainId(x.chainId) === normalizedChainId;
-        }
+      const magic = await this.getMagic();
+      await (magic as any).evm.switchChain(normalizedChainId);
 
-        if (typeof x === 'string') {
-          const networkMap: Record<string, number> = {
-            mainnet: 1,
-            sepolia: 11155111,
-            goerli: 5,
-          };
+      const metadata = await magic.user.getInfo();
+      const account = metadata?.wallets?.ethereum?.publicAddress;
+      if (!account) throw new Error('Failed to get account after chain switch');
 
-          const networkId = networkMap[x.toLowerCase()] ?? null;
-
-          return networkId !== null && normalizeChainId(networkId) === normalizedChainId;
-        }
-
-        return normalizeChainId(x as unknown as bigint | number | string) === normalizedChainId;
-      });
-
-      const provider = (await this.getProvider()) as any;
-
-      if (provider?.off) {
-        provider.off('accountsChanged', this.onAccountsChanged);
-        provider.off('chainChanged', this.onChainChanged);
-        provider.off('disconnect', this.onDisconnect);
-      }
-
-      const newOptions: MagicOptions = {
-        ...options,
-        connectorType: 'dedicated',
-        magicSdkConfiguration: {
-          ...options.magicSdkConfiguration,
-          network,
-        },
-      };
-
-      const { getAccount, getMagicSDK, getProvider, onAccountsChanged } = magicConnector({
-        chains,
-        options: newOptions,
-      });
-
-      this.getAccount = getAccount;
-      this.magic = getMagicSDK();
-      this.getProvider = getProvider;
-      this.onAccountsChanged = onAccountsChanged;
-
-      const metadata = await this.magic?.user.getInfo();
-      const account = metadata?.publicAddress as Address;
-
-      registerProviderEventListeners(this.magic!.rpcProvider, this.onChainChanged, this.onDisconnect);
+      const address = getAddress(account);
       this.onChainChanged(chain.id.toString());
-      config.emitter.emit('change', { accounts: [account] });
-      this.onAccountsChanged([account]);
+      config.emitter.emit('change', { accounts: [address] });
+      this.onAccountsChanged([address]);
       return chain;
     },
 
-    isAuthorized: async () => {
+    async isAuthorized() {
       try {
-        const magic = getMagicSDK();
-
-        if (!magic) {
-          return false;
-        }
-
+        const magic: Magic = await this.getMagic();
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) return true;
 
-        const result = await magic.oauth2.getRedirectResult();
-        if (result) {
-          localStorage.setItem('magicRedirectResult', JSON.stringify(result));
+        if (oauthProviders?.length > 0) {
+          const result = await (magic as any).oauth2.getRedirectResult();
+          if (result) {
+            localStorage.setItem('magicRedirectResult', JSON.stringify(result));
+          }
+          return result !== null;
         }
-        return result !== null;
       } catch {}
       return false;
     },
@@ -296,4 +250,16 @@ export function dedicatedWalletConnector({ chains, options }: DedicatedWalletCon
       config.emitter.emit('disconnect');
     },
   }));
+
+  // Expose `magic` as non-enumerable so wagmi's deepEqual doesn't
+  // traverse the Magic SDK's circular references and blow the stack.
+  return ((...args: Parameters<typeof connectorFn>) => {
+    const connector = connectorFn(...args);
+    Object.defineProperty(connector, 'magic', {
+      get: () => magic,
+      enumerable: false,
+      configurable: true,
+    });
+    return connector;
+  }) as typeof connectorFn;
 }

@@ -1,4 +1,18 @@
-# @magiclabs/wagmi-magic-connector
+# @likecoin/wagmi-magic-connector
+
+## 2.4.0
+
+### Minor Changes
+
+- Upgrade Magic SDK from v29 to v33 (`magic-sdk@^33.4.1`, `@magic-ext/oauth2@^15.3.1`)
+- Add `@magic-ext/evm@^1.2.1` for native EVM chain switching via `magic.evm.switchChain()`
+- Rewrite `switchChain()` to use EVMExtension instead of re-instantiating the entire Magic SDK
+- Update `publicAddress` access to `wallets.ethereum.publicAddress` (Magic SDK v31 breaking change)
+- Add `customLoginText` option to customize modal login button text
+- Lazy-load `magic-sdk`, `@magic-ext/oauth2`, and `@magic-ext/evm` for smaller initial bundle
+- Move `@wagmi/core` to peer dependencies
+- Remove unused dependencies
+- Publish as `@likecoin/wagmi-magic-connector` fork
 
 ## 2.3.0
 

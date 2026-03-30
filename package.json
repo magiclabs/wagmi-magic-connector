@@ -1,11 +1,11 @@
 {
-  "name": "@magiclabs/wagmi-connector",
-  "version": "2.3.2",
+  "name": "@likecoin/wagmi-magic-connector",
+  "version": "2.4.0",
   "description": "wagmi connector to connect with Magic SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "repository": "https://github.com/magiclabs/wagmi-magic-connector",
+  "repository": "https://github.com/likecoin/wagmi-magic-connector",
   "license": "MIT",
   "keywords": [
     "wagmi",
@@ -22,10 +22,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@magic-ext/oauth2": "^11.4.1",
-    "@wagmi/connectors": "^5.0.6",
-    "@wagmi/core": "^2.10.4",
-    "magic-sdk": "29.4.2"
+    "@magic-ext/evm": "^1.2.1",
+    "@magic-ext/oauth2": "^15.3.1",
+    "magic-sdk": "^33.4.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.24.0",
@@ -46,6 +45,7 @@
     "viem": "2.x"
   },
   "peerDependencies": {
+    "@wagmi/core": "^2.10.4 || ^3.0.0",
     "viem": "2.x"
   },
   "files": [
